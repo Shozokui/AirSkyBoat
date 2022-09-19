@@ -113,9 +113,9 @@ local pTable =
     [xi.magic.spell.GAIN_CHR     ] = { 1, xi.effect.CHR_BOOST,      1,    5,  300, true,  false, 0 },
 
     -- Haste
-    [xi.magic.spell.HASTE        ] = { 1, xi.effect.HASTE,         48, 1465,  180, true,  false, 0 },
-    [xi.magic.spell.HASTE_II     ] = { 2, xi.effect.HASTE,         96, 2998,  180, true,  false, 0 },
-    [xi.magic.spell.HASTEGA      ] = { 1, xi.effect.HASTE,         48, 1494,  180, false, false, 0 },
+    [xi.magic.spell.HASTE        ] = { 1, xi.effect.HASTE,         48, 1500,  180, true,  false, 0 },
+    [xi.magic.spell.HASTE_II     ] = { 2, xi.effect.HASTE,         96, 3000,  180, true,  false, 0 },
+    [xi.magic.spell.HASTEGA      ] = { 1, xi.effect.HASTE,         48, 1530,  180, false, false, 0 },
     -- [xi.magic.spell.HASTEGA_II   ] = { 2, xi.effect.HASTE,         99, 2998,  180, false, false, 0 },
 
     -- Phalanx
@@ -123,16 +123,16 @@ local pTable =
     [xi.magic.spell.PHALANX_II   ] = { 2, xi.effect.PHALANX,       75,    0,  240, true,  false, 0 },
 
     -- Protect / Protectra
-    [xi.magic.spell.PROTECT      ] = { 1, xi.effect.PROTECT,       10,   20, 1800, false, false, 0 },
-    [xi.magic.spell.PROTECT_II   ] = { 2, xi.effect.PROTECT,       25,   50, 1800, false, false, 0 },
-    [xi.magic.spell.PROTECT_III  ] = { 3, xi.effect.PROTECT,       40,   90, 1800, false, false, 0 },
-    [xi.magic.spell.PROTECT_IV   ] = { 4, xi.effect.PROTECT,       55,  140, 1800, false, false, 0 },
-    [xi.magic.spell.PROTECT_V    ] = { 5, xi.effect.PROTECT,       60,  220, 1800, false, false, 0 },
-    [xi.magic.spell.PROTECTRA    ] = { 1, xi.effect.PROTECT,       10,   20, 1800, false, false, 0 },
-    [xi.magic.spell.PROTECTRA_II ] = { 2, xi.effect.PROTECT,       25,   50, 1800, false, false, 0 },
-    [xi.magic.spell.PROTECTRA_III] = { 3, xi.effect.PROTECT,       40,   90, 1800, false, false, 0 },
-    [xi.magic.spell.PROTECTRA_IV ] = { 4, xi.effect.PROTECT,       55,  140, 1800, false, false, 0 },
-    [xi.magic.spell.PROTECTRA_V  ] = { 5, xi.effect.PROTECT,       60,  220, 1800, false, false, 0 },
+    [xi.magic.spell.PROTECT      ] = { 1, xi.effect.PROTECT,        7,   10, 1800, false, false, 0 },
+    [xi.magic.spell.PROTECT_II   ] = { 2, xi.effect.PROTECT,       27,   25, 1800, false, false, 0 },
+    [xi.magic.spell.PROTECT_III  ] = { 3, xi.effect.PROTECT,       47,   40, 1800, false, false, 0 },
+    [xi.magic.spell.PROTECT_IV   ] = { 4, xi.effect.PROTECT,       63,   55, 1800, false, false, 0 },
+    [xi.magic.spell.PROTECT_V    ] = { 5, xi.effect.PROTECT,       76,   60, 1800, false, false, 0 },
+    [xi.magic.spell.PROTECTRA    ] = { 1, xi.effect.PROTECT,        7,   10, 1800, false, false, 0 },
+    [xi.magic.spell.PROTECTRA_II ] = { 2, xi.effect.PROTECT,       27,   25, 1800, false, false, 0 },
+    [xi.magic.spell.PROTECTRA_III] = { 3, xi.effect.PROTECT,       47,   40, 1800, false, false, 0 },
+    [xi.magic.spell.PROTECTRA_IV ] = { 4, xi.effect.PROTECT,       63,   55, 1800, false, false, 0 },
+    [xi.magic.spell.PROTECTRA_V  ] = { 5, xi.effect.PROTECT,       75,   60, 1800, false, false, 0 },
 
     -- Refresh
     [xi.magic.spell.REFRESH      ] = { 1, xi.effect.REFRESH,       41,    3,  150, true,  true,  0 },
@@ -147,16 +147,16 @@ local pTable =
     [xi.magic.spell.REGEN_V      ] = { 5, xi.effect.REGEN,         99,   40,   60, true,  false, 0 },
 
     -- Shell / Shellra
-    [xi.magic.spell.SHELL        ] = { 1, xi.effect.SHELL,         24, 1055, 1800, false, false, 0 },
-    [xi.magic.spell.SHELL_II     ] = { 2, xi.effect.SHELL,         36, 1641, 1800, false, false, 0 },
-    [xi.magic.spell.SHELL_III    ] = { 3, xi.effect.SHELL,         48, 2188, 1800, false, false, 0 },
-    [xi.magic.spell.SHELL_IV     ] = { 4, xi.effect.SHELL,         56, 2617, 1800, false, false, 0 },
-    [xi.magic.spell.SHELL_V      ] = { 5, xi.effect.SHELL,         60, 2930, 1800, false, false, 0 },
-    [xi.magic.spell.SHELLRA      ] = { 1, xi.effect.SHELL,         24, 1055, 1800, false, false, 0 },
-    [xi.magic.spell.SHELLRA_II   ] = { 2, xi.effect.SHELL,         36, 1641, 1800, false, false, 0 },
-    [xi.magic.spell.SHELLRA_III  ] = { 3, xi.effect.SHELL,         48, 2188, 1800, false, false, 0 },
-    [xi.magic.spell.SHELLRA_IV   ] = { 4, xi.effect.SHELL,         56, 2617, 1800, false, false, 0 },
-    [xi.magic.spell.SHELLRA_V    ] = { 5, xi.effect.SHELL,         60, 2930, 1800, false, false, 0 },
+    [xi.magic.spell.SHELL        ] = { 1, xi.effect.SHELL,         18,  980, 1800, false, false, 0 },
+    [xi.magic.spell.SHELL_II     ] = { 2, xi.effect.SHELL,         37, 1480, 1800, false, false, 0 },
+    [xi.magic.spell.SHELL_III    ] = { 3, xi.effect.SHELL,         57, 1990, 1800, false, false, 0 },
+    [xi.magic.spell.SHELL_IV     ] = { 4, xi.effect.SHELL,         68, 2340, 1800, false, false, 0 },
+    [xi.magic.spell.SHELL_V      ] = { 5, xi.effect.SHELL,         76, 2930, 1800, false, false, 0 },
+    [xi.magic.spell.SHELLRA      ] = { 1, xi.effect.SHELL,         18,  980, 1800, false, false, 0 },
+    [xi.magic.spell.SHELLRA_II   ] = { 2, xi.effect.SHELL,         37, 1480, 1800, false, false, 0 },
+    [xi.magic.spell.SHELLRA_III  ] = { 3, xi.effect.SHELL,         57, 1990, 1800, false, false, 0 },
+    [xi.magic.spell.SHELLRA_IV   ] = { 4, xi.effect.SHELL,         68, 2340, 1800, false, false, 0 },
+    [xi.magic.spell.SHELLRA_V    ] = { 5, xi.effect.SHELL,         75, 2930, 1800, false, false, 0 },
 
     -- -Spikes
     [xi.magic.spell.BLAZE_SPIKES ] = { 1, xi.effect.BLAZE_SPIKES,   1,    0,  180, true,  false, 0 },
