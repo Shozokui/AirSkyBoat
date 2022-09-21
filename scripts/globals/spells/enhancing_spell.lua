@@ -379,7 +379,7 @@ xi.spells.enhancing.calculateEnhancingDuration = function(caster, target, spell,
 
     -- Bar-Element
     elseif spellEffect >= xi.effect.BARFIRE and spellEffect <= xi.effect.BARWATER then
-        duration = utils.clamp(duration + 0.8 (skillLevel - 180), 150, 240) -- Min duration is 2.5 minutes, Max duration is 4 minutes
+        duration = utils.clamp(duration + 0.8 * (skillLevel - 180), 150, 240) -- Min duration is 2.5 minutes, Max duration is 4 minutes
 
     -- Bar-Status
     elseif spellEffect == xi.effect.BARAMNESIA or (spellEffect >= xi.effect.BARSLEEP and spellEffect <= xi.effect.BARVIRUS) then
