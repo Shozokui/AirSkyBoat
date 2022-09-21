@@ -334,6 +334,7 @@ xi.spells.enhancing.calculateEnhancingDuration = function(caster, target, spell,
     local duration     = pTable[spellId][5]
     local useComposure = pTable[spellId][6]
     local targetLevel  = target:getMainLvl()
+    local skillLevel   = caster:getSkillLevel(spell:getSkillType())
 
     -- Deodorize, Invisible and Sneak have a random factor to base duration.
     if spellEffect == xi.effect.DEODORIZE or spellEffect == xi.effect.INVISIBLE or spellEffect == xi.effect.SNEAK then
