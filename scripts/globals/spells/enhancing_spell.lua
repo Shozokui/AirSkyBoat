@@ -29,20 +29,20 @@ local pTable =
     [xi.magic.spell.AUSPICE      ] = { 1, xi.effect.AUSPICE,       55,    0,  180, true,  false, 0 },
 
     -- Bar-Element
-    [xi.magic.spell.BARAERO      ] = { 1, xi.effect.BARAERO,        1,    0,  480, true,  true,  0 },
-    [xi.magic.spell.BARBLIZZARD  ] = { 1, xi.effect.BARBLIZZARD,    1,    0,  480, true,  true,  0 },
-    [xi.magic.spell.BARFIRE      ] = { 1, xi.effect.BARFIRE,        1,    0,  480, true,  true,  0 },
-    [xi.magic.spell.BARSTONE     ] = { 1, xi.effect.BARSTONE,       1,    0,  480, true,  true,  0 },
-    [xi.magic.spell.BARTHUNDER   ] = { 1, xi.effect.BARTHUNDER,     1,    0,  480, true,  true,  0 },
-    [xi.magic.spell.BARWATER     ] = { 1, xi.effect.BARWATER,       1,    0,  480, true,  true,  0 },
-    [xi.magic.spell.BARAERA      ] = { 2, xi.effect.BARAERO,        1,    0,  480, true,  true,  0 },
-    [xi.magic.spell.BARBLIZZARA  ] = { 2, xi.effect.BARBLIZZARD,    1,    0,  480, true,  true,  0 },
-    [xi.magic.spell.BARFIRA      ] = { 2, xi.effect.BARFIRE,        1,    0,  480, true,  true,  0 },
-    [xi.magic.spell.BARSTONRA    ] = { 2, xi.effect.BARSTONE,       1,    0,  480, true,  true,  0 },
-    [xi.magic.spell.BARTHUNDRA   ] = { 2, xi.effect.BARTHUNDER,     1,    0,  480, true,  true,  0 },
-    [xi.magic.spell.BARWATERA    ] = { 2, xi.effect.BARWATER,       1,    0,  480, true,  true,  0 },
+    [xi.magic.spell.BARAERO      ] = { 1, xi.effect.BARAERO,        1,    0,  150, true,  true,  0 },
+    [xi.magic.spell.BARBLIZZARD  ] = { 1, xi.effect.BARBLIZZARD,    1,    0,  150, true,  true,  0 },
+    [xi.magic.spell.BARFIRE      ] = { 1, xi.effect.BARFIRE,        1,    0,  150, true,  true,  0 },
+    [xi.magic.spell.BARSTONE     ] = { 1, xi.effect.BARSTONE,       1,    0,  150, true,  true,  0 },
+    [xi.magic.spell.BARTHUNDER   ] = { 1, xi.effect.BARTHUNDER,     1,    0,  150, true,  true,  0 },
+    [xi.magic.spell.BARWATER     ] = { 1, xi.effect.BARWATER,       1,    0,  150, true,  true,  0 },
+    [xi.magic.spell.BARAERA      ] = { 2, xi.effect.BARAERO,        1,    0,  150, true,  true,  0 },
+    [xi.magic.spell.BARBLIZZARA  ] = { 2, xi.effect.BARBLIZZARD,    1,    0,  150, true,  true,  0 },
+    [xi.magic.spell.BARFIRA      ] = { 2, xi.effect.BARFIRE,        1,    0,  150, true,  true,  0 },
+    [xi.magic.spell.BARSTONRA    ] = { 2, xi.effect.BARSTONE,       1,    0,  150, true,  true,  0 },
+    [xi.magic.spell.BARTHUNDRA   ] = { 2, xi.effect.BARTHUNDER,     1,    0,  150, true,  true,  0 },
+    [xi.magic.spell.BARWATERA    ] = { 2, xi.effect.BARWATER,       1,    0,  150, true,  true,  0 },
 
-    -- Bar-Element
+    -- Bar-Status
     [xi.magic.spell.BARAMNESIA   ] = { 1, xi.effect.BARAMNESIA,     1,    1,  480, true,  true,  0 },
     [xi.magic.spell.BARBLIND     ] = { 1, xi.effect.BARBLIND,       1,    1,  480, true,  true,  0 },
     [xi.magic.spell.BARPARALYZE  ] = { 1, xi.effect.BARPARALYZE,    1,    1,  480, true,  true,  0 },
@@ -205,7 +205,14 @@ xi.spells.enhancing.calculateEnhancingBasePower = function(caster, target, spell
         basePower = utils.clamp(basePower, 40, 150) -- Max is 150 and min is 40 at skill 0.
     -- Bar-Status
     elseif spellEffect == xi.effect.BARAMNESIA or (spellEffect >= xi.effect.BARSLEEP and spellEffect <= xi.effect.BARVIRUS) then
-        basePower = basePower + skillLevel / 50 -- This is WRONG. SO SO WRONG.
+        -- Works the same as Bar-Element spells. This is only out of 100
+        if skillLevel > 300 then
+            basePower = (25 + math.floor(skillLevel / 4)) / 10 -- 15 at 500
+        else
+            basePower = (40 + math.floor(skillLevel / 5)) / 10 -- 10 at 300
+        end
+
+        basePower = utils.clamp(basePower, 4, 15) -- Max is 15 and min is 4 a skill 0.
 
     -- Boost-Stat / Gain-Stat
     elseif spellEffect >= xi.effect.STR_BOOST and spellEffect <= xi.effect.CHR_BOOST then
@@ -369,6 +376,15 @@ xi.spells.enhancing.calculateEnhancingDuration = function(caster, target, spell,
     -- Sneak
     elseif spellEffect == xi.effect.SNEAK then
         duration = duration + target:getMod(xi.mod.SNEAK_DURATION)
+
+    -- Bar-Element
+    elseif spellEffect >= xi.effect.BARFIRE and spellEffect <= xi.effect.BARWATER then
+        duration = utils.clamp(duration + 0.8 (skillLevel - 180), 150, 240) -- Min duration is 2.5 minutes, Max duration is 4 minutes
+
+    -- Bar-Status
+    elseif spellEffect == xi.effect.BARAMNESIA or (spellEffect >= xi.effect.BARSLEEP and spellEffect <= xi.effect.BARVIRUS) then
+        duration = utils.clamp(skillLevel * 2, 150, 480) -- Duration is based on skilllevel
+
     end
 
     --------------------
