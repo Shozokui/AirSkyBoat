@@ -20,7 +20,8 @@ zoneObject.onZoneIn = function(player, prevZone)
     -- FIRST LOGIN (START CS)
     if player:getPlaytime(false) == 0 then
         if xi.settings.main.NEW_CHARACTER_CUTSCENE == 1 then
-            cs = 500
+            ---@diagnostic disable-next-line: cast-local-type
+            cs = { 500, -1, 0x93 }
         end
 
         player:setPos(-104, -8, -128, 227)
