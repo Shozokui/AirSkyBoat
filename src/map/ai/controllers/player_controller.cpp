@@ -55,6 +55,11 @@ bool CPlayerController::Cast(uint16 targid, SpellID spellid)
         {
             return false;
         }
+        if (!PChar->CanSeeEnemy(PChar->GetEntity(targid)))
+        {
+            PChar->pushPacket(new CMessageBasicPacket(PChar, PChar->GetEntity(targid), 0, 0, MSGBASIC_CANNOT_SEE));
+            return false;
+        }
         return CController::Cast(targid, spellid);
     }
     else
@@ -132,6 +137,11 @@ bool CPlayerController::Ability(uint16 targid, uint16 abilityid)
         {
             return false;
         }
+        if (!PChar->CanSeeEnemy(PChar->GetEntity(targid)))
+        {
+            PChar->pushPacket(new CMessageBasicPacket(PChar, PChar->GetEntity(targid), 0, 0, MSGBASIC_CANNOT_SEE));
+            return false;
+        }
         return PChar->PAI->Internal_Ability(targid, abilityid);
     }
     else
@@ -150,6 +160,12 @@ bool CPlayerController::RangedAttack(uint16 targid)
         {
             return false;
         }
+
+        if (!PChar->CanSeeEnemy(PChar->GetEntity(targid)))
+        {
+            PChar->pushPacket(new CMessageBasicPacket(PChar, PChar->GetEntity(targid), 0, 0, MSGBASIC_CANNOT_SEE));
+            return false;
+        }
         return PChar->PAI->Internal_RangedAttack(targid);
     }
     else
@@ -166,6 +182,11 @@ bool CPlayerController::UseItem(uint16 targid, uint8 loc, uint8 slotid)
     {
         if (auto target = PChar->GetEntity(targid); target && target->PAI->IsUntargetable())
         {
+            return false;
+        }
+        if (!PChar->CanSeeEnemy(PChar->GetEntity(targid)))
+        {
+            PChar->pushPacket(new CMessageBasicPacket(PChar, PChar->GetEntity(targid), 0, 0, MSGBASIC_CANNOT_SEE));
             return false;
         }
         return PChar->PAI->Internal_UseItem(targid, loc, slotid);
@@ -226,6 +247,12 @@ bool CPlayerController::WeaponSkill(uint16 targid, uint16 wsid)
         {
             if (PTarget->PAI->IsUntargetable())
             {
+                return false;
+            }
+
+            if (!PChar->CanSeeEnemy(PChar->GetEntity(targid)))
+            {
+                PChar->pushPacket(new CMessageBasicPacket(PChar, PChar->GetEntity(targid), 0, 0, MSGBASIC_CANNOT_SEE));
                 return false;
             }
 

@@ -942,6 +942,15 @@ bool CCharEntity::CanUseSpell(CSpell* PSpell)
            !PRecastContainer->Has(RECAST_MAGIC, static_cast<uint16>(PSpell->getID()));
 }
 
+bool CCharEntity::CanSeeEnemy(CBaseEntity* PTarget)
+{
+    auto zone = zoneutils::GetZone(this->getZone());
+    position_t playerPos(this->GetXPos(), this->GetYPos(), this->GetZPos(), 0, this->GetRotPos());
+    position_t targetPos(PTarget->GetXPos(), PTarget->GetYPos(), PTarget->GetZPos(), 0, PTarget->GetRotPos());
+
+    return zone->m_navMesh->raycast(playerPos, targetPos, true);
+}
+
 void CCharEntity::OnChangeTarget(CBattleEntity* PNewTarget)
 {
     TracyZoneScoped;
