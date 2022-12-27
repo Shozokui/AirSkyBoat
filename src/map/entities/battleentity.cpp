@@ -1794,10 +1794,17 @@ void CBattleEntity::OnCastFinished(CMagicState& state, action_t& action)
                 msg = PSpell->getAoEMessage();
             }
 
-            if (damage < 0)
+            if (PSpell->isCure() || PSpell->isHeal())
             {
-                msg                = MSGBASIC_MAGIC_RECOVERS_HP;
-                actionTarget.param = static_cast<uint16>(std::clamp(damage * -1, 0, PTarget->GetMaxHP() - PTarget->health.hp));
+                if (PTarget->id == this->id) // Only show the "<player> casts <spell>" message for the caster
+                {
+                    msg = MSGBASIC_MAGIC_RECOVERS_HP;
+                }
+                else
+                {
+                    msg = MSGBASIC_RECOVERS_HP;
+                }
+                actionTarget.param = static_cast<uint16>(std::clamp(damage, 0, PTarget->GetMaxHP() - PTarget->health.hp));
             }
             else
             {
