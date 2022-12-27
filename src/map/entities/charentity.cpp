@@ -19,9 +19,12 @@
 ===========================================================================
 */
 
+
+
 #include "common/logging.h"
 #include "common/timer.h"
 #include "common/utils.h"
+#include "spdlog/stopwatch.h"
 
 #include <cstring>
 
@@ -940,6 +943,19 @@ bool CCharEntity::CanUseSpell(CSpell* PSpell)
     TracyZoneScoped;
     return charutils::hasSpell(this, static_cast<uint16>(PSpell->getID())) && CBattleEntity::CanUseSpell(PSpell) &&
            !PRecastContainer->Has(RECAST_MAGIC, static_cast<uint16>(PSpell->getID()));
+}
+
+bool CCharEntity::CanSeeEnemy(CBaseEntity* PTarget)
+{
+    spdlog::stopwatch sw;
+
+    auto       zone = zoneutils::GetZone(this->getZone());
+    position_t playerPos(this->GetXPos(), this->GetYPos(), this->GetZPos(), 0, this->GetRotPos());
+    position_t targetPos(PTarget->GetXPos(), PTarget->GetYPos(), PTarget->GetZPos(), 0, PTarget->GetRotPos());
+    bool       result = zone->m_navMesh->raycast(playerPos, targetPos, true);
+
+    spdlog::debug("CanSeeEnemy Elapsed: {} seconds", sw);
+    return result;
 }
 
 void CCharEntity::OnChangeTarget(CBattleEntity* PNewTarget)

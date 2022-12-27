@@ -38,6 +38,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 #include "battleentity.h"
 #include "petentity.h"
 
+#include "utils/zoneutils.h"
 #include "utils/fishingutils.h"
 
 #define MAX_QUESTAREA    11
@@ -558,6 +559,7 @@ public:
     bool         IsMobOwner(CBattleEntity* PTarget);
     virtual bool ValidTarget(CBattleEntity* PInitiator, uint16 targetFlags) override;
     virtual bool CanUseSpell(CSpell*) override;
+    virtual bool CanSeeEnemy(CBaseEntity* PTarget);
 
     virtual void Die() override;
     void         Die(duration _duration);
