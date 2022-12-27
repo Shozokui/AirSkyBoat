@@ -38,7 +38,7 @@ constexpr int8  CNavMesh::ERROR_NEARESTPOLY;
 constexpr float smallPolyPickExt[3]  = { 0.5f, 1.0f, 0.5f };
 constexpr float polyPickExt[3]       = { 5.0f, 10.0f, 5.0f };
 constexpr float skinnyPolyPickExt[3] = { 0.01f, 10.0f, 0.01f };
-constexpr float verticalLimit        = 0.25f;
+constexpr float verticalLimit        = 0.75f;
 
 void CNavMesh::ToFFXIPos(const position_t* pos, float* out)
 {
