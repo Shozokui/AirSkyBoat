@@ -1732,6 +1732,7 @@ void CBattleEntity::OnCastFinished(CMagicState& state, action_t& action)
     auto totalTargets = (uint16)PAI->TargetFind->m_targets.size();
 
     PSpell->setTotalTargets(totalTargets);
+    PSpell->setPrimaryTargetID(PActionTarget->id);
 
     action.id         = id;
     action.actiontype = ACTION_MAGIC_FINISH;
@@ -1794,22 +1795,7 @@ void CBattleEntity::OnCastFinished(CMagicState& state, action_t& action)
                 msg = PSpell->getAoEMessage();
             }
 
-            if (PSpell->isCure() || PSpell->isHeal())
-            {
-                if (PTarget->id == this->id) // Only show the "<player> casts <spell>" message for the caster
-                {
-                    msg = MSGBASIC_MAGIC_RECOVERS_HP;
-                }
-                else
-                {
-                    msg = MSGBASIC_RECOVERS_HP;
-                }
-                actionTarget.param = static_cast<uint16>(std::clamp(damage, 0, PTarget->GetMaxHP() - PTarget->health.hp));
-            }
-            else
-            {
-                actionTarget.param = damage;
-            }
+            actionTarget.param = damage;
         }
 
         if (actionTarget.animation == 122)
