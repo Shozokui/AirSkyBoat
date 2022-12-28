@@ -1124,7 +1124,6 @@ public:
     void setRange(float range);
     void setConeAngle(uint16 angle);
 
-
     const std::string& getName();
     void               setName(const std::string& name);
 
