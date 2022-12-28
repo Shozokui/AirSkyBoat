@@ -1132,11 +1132,11 @@ protected:
     CSpell& operator=(const CSpell&) = default;
 
 private:
-    SpellID     m_ID;                   // spell id
-    uint32      m_primaryTargetID{};    // primary target ID
-    uint32      m_castTime{};           // time to cast spell
-    uint32      m_recastTime{};         // recast time
-    uint16      m_animation{};          // animation for spell
+    SpellID     m_ID;                // spell id
+    uint32      m_primaryTargetID{}; // primary target ID
+    uint32      m_castTime{};        // time to cast spell
+    uint32      m_recastTime{};      // recast time
+    uint16      m_animation{};       // animation for spell
     uint16      m_animationTime{};
     uint8       m_skillType{};
     float       m_range{};
