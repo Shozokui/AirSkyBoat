@@ -1796,6 +1796,8 @@ void CBattleEntity::OnCastFinished(CMagicState& state, action_t& action)
             }
 
             actionTarget.param = damage;
+            actionTarget.modifier = PSpell->getModifier();
+            PSpell->setModifier(MODIFIER::NONE); // Reset modifier on use
         }
 
         if (actionTarget.animation == 122)
