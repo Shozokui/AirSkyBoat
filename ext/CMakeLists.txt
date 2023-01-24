@@ -5,6 +5,7 @@
 add_subdirectory(concurrentqueue)
 add_subdirectory(detour)
 add_subdirectory(recast)
+add_subdirectory(fast_obj)
 add_subdirectory(sol)
 add_subdirectory(spdlog)
 
@@ -93,6 +94,7 @@ set(EXTERNAL_LIBS
     spdlog
     recast
     detour
+    fast_obj
     sol2_single
     argparse
     efsw
