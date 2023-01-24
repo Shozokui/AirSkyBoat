@@ -159,6 +159,7 @@ CZone::CZone(ZONEID ZoneID, REGION_TYPE RegionID, CONTINENT_TYPE ContinentID, ui
     LoadZoneLines();
     LoadZoneWeather();
     LoadNavMesh();
+    LoadZoneLos();
 }
 
 CZone::~CZone()
@@ -511,6 +512,23 @@ void CZone::LoadNavMesh()
     {
         ShowDebug(fmt::format("CZone::LoadNavMesh: Cannot load navmesh file ({})", file));
     }
+}
+
+void CZone::LoadZoneLos()
+{
+    if (GetType() == ZONE_TYPE::CITY || (m_miscMask & MISC_LOS_OFF))
+    {
+        // Skip cities and zones with line of sight turned off
+        return;
+    }
+
+    if (lineOfSight)
+    {
+        // Clean up previous object if one exists.
+        delete lineOfSight;
+    }
+
+    lineOfSight = ZoneLos::Load((uint16)GetID(), fmt::sprintf("losmeshes/%s.obj", GetName()));
 }
 
 /************************************************************************

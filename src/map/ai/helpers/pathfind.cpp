@@ -619,17 +619,6 @@ bool CPathFind::InWater()
     return m_POwner->loc.zone->PNavigation->isInWater(m_POwner->loc.p);
 }
 
-bool CPathFind::CanSeePoint(const position_t& point, bool lookOffMesh)
-{
-    if (isNavMeshEnabled())
-    {
-        position_t hit;
-        return m_POwner->loc.zone->PNavigation->raycast(m_POwner->loc.p, point, hit);
-    }
-
-    return true;
-}
-
 const position_t& CPathFind::GetDestination() const
 {
     return m_points.back().position;
