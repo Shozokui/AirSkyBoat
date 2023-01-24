@@ -82,8 +82,8 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/mobskill.h
     ${CMAKE_CURRENT_SOURCE_DIR}/modifier.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/modifier.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/navmesh.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/navmesh.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/navigation_container.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/navigation_container.h
     ${CMAKE_CURRENT_SOURCE_DIR}/notoriety_container.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/notoriety_container.h
     ${CMAKE_CURRENT_SOURCE_DIR}/packet_guard.cpp

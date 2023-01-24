@@ -863,7 +863,8 @@ void CMobController::Move()
                     // because they can't find a path around to the player's position.
                     if (IsStuck() && PTarget != nullptr)
                     {
-                        PMob->PAI->PathFind->StepTo(PTarget->loc.p, false);
+                        PMob->PAI->PathFind->WarpTo(PTarget->loc.p);
+                        DebugNavmesh("Target is stuck! Porting them to player.")
                     }
                 }
 

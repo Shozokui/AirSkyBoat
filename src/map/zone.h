@@ -32,11 +32,10 @@
 
 #include "battlefield_handler.h"
 #include "campaign_handler.h"
+#include "navigation_container.h"
+#include "packets/weather.h"
 #include "trigger_area.h"
 #include "vana_time.h"
-
-#include "navmesh.h"
-#include "packets/weather.h"
 
 enum ZONEID : uint16
 {
@@ -511,6 +510,8 @@ typedef std::map<uint16, zoneWeather_t> weatherVector_t;
 
 typedef std::map<uint16, CBaseEntity*> EntityList_t;
 
+typedef std::unique_ptr<CNavigationContainer> NavContainer_t;
+
 using QueryByNameResult_t = std::vector<CBaseEntity*>;
 
 int32 zone_update_weather(uint32 tick, CTaskMgr::CTask* PTask);
@@ -617,9 +618,10 @@ public:
     CBattlefieldHandler* m_BattlefieldHandler; // BCNM Instances in this zone
     CCampaignHandler*    m_CampaignHandler;    // WOTG campaign information for this zone
 
-    CNavMesh* m_navMesh;            // zones navmesh for finding paths
-    bool      m_updatedNavmesh;     // Flag to turn off special path code.
-    bool      m_zoneCarefulPathing; // Zonewide careful pathing, should only be used with updated meshes.
+    bool m_updatedNavmesh;     // Flag to turn off special path code.
+    bool m_zoneCarefulPathing; // Zonewide careful pathing, should only be used with updated meshes.
+
+    NavContainer_t PNavigation; // Holds dtNavMesh & queries
 
     time_point m_LoadedAt; // time zone was loaded
 

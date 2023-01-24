@@ -143,11 +143,11 @@ CZone::CZone(ZONEID ZoneID, REGION_TYPE RegionID, CONTINENT_TYPE ContinentID, ui
     m_BattlefieldHandler = nullptr;
     m_Weather            = WEATHER_NONE;
     m_WeatherChangeTime  = 0;
-    m_navMesh            = nullptr;
     m_updatedNavmesh     = false;
     m_zoneCarefulPathing = false;
     m_zoneEntities       = new CZoneEntities(this);
     m_CampaignHandler    = new CCampaignHandler(this);
+    PNavigation          = std::make_unique<CNavigationContainer>(static_cast<uint16>(GetID()));
 
     m_ZoneDirection     = 0;
     m_ZoneAnimation     = 0;
@@ -156,7 +156,6 @@ CZone::CZone(ZONEID ZoneID, REGION_TYPE RegionID, CONTINENT_TYPE ContinentID, ui
 
     // settings should load first
     LoadZoneSettings();
-
     LoadZoneLines();
     LoadZoneWeather();
     LoadNavMesh();
@@ -503,20 +502,14 @@ void CZone::LoadZoneSettings()
 void CZone::LoadNavMesh()
 {
     TracyZoneScoped;
-    if (m_navMesh == nullptr)
-    {
-        m_navMesh = new CNavMesh((uint16)GetID());
-    }
 
     char file[255];
     memset(file, 0, sizeof(file));
     snprintf(file, sizeof(file), "navmeshes/%s.nav", GetName().c_str());
 
-    if (!m_navMesh->load(file))
+    if (!PNavigation->loadFromFile(file))
     {
-        DebugNavmesh("CZone::LoadNavMesh: Cannot load navmesh file (%s)", file);
-        delete m_navMesh;
-        m_navMesh = nullptr;
+        ShowError(fmt::format("CZone::LoadNavMesh: Cannot load navmesh file ({})", file));
     }
 }
 

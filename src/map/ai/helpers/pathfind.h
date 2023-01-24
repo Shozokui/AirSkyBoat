@@ -119,6 +119,9 @@ public:
     // returns true if raycast didn't hit any walls
     bool CanSeePoint(const position_t& point, bool lookOffMesh = true);
 
+    // returns the full path that's being followed
+    auto GetPath() -> std::vector<pathpoint_t>;
+
     // returns the final destination of the current path
     const position_t& GetDestination() const;
 

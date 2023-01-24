@@ -5046,7 +5046,7 @@ namespace luautils
         position_t   pos    = nearPosition(entity->loc.p, distance, theta);
 
         float validPos[3];
-        bool  success = entity->loc.zone->m_navMesh->findFurthestValidPoint(entity->loc.p, pos, validPos);
+        bool  success = entity->loc.zone->PNavigation->findFurthestValidPoint(entity->loc.p, pos, validPos);
         if (!success)
         {
             return sol::lua_nil;

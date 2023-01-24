@@ -185,10 +185,7 @@ WEATHER CLuaZone::getWeather()
 
 void CLuaZone::reloadNavmesh()
 {
-    if (m_pLuaZone->m_navMesh)
-    {
-        m_pLuaZone->m_navMesh->reload();
-    }
+    m_pLuaZone->PNavigation->reloadMesh();
 }
 
 bool CLuaZone::isNavigablePoint(const sol::table& point)
@@ -204,14 +201,7 @@ bool CLuaZone::isNavigablePoint(const sol::table& point)
     };
     // clang-format on
 
-    if (m_pLuaZone->m_navMesh)
-    {
-        return m_pLuaZone->m_navMesh->validPosition(position);
-    }
-    else // No navmesh, just nod and smile
-    {
-        return true;
-    }
+    return m_pLuaZone->PNavigation->isValidPosition(position);
 }
 
 std::optional<CLuaBaseEntity> CLuaZone::insertDynamicEntity(sol::table table)
@@ -306,7 +296,6 @@ std::optional<CLuaBaseEntity> CLuaZone::insertDynamicEntity(sol::table table)
         }
 
         luautils::OnEntityLoad(PMob);
-
         luautils::OnMobInitialize(PMob);
         luautils::ApplyMixins(PMob);
         luautils::ApplyZoneMixins(PMob);

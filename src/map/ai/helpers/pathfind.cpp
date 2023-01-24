@@ -23,10 +23,14 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 #include "../../../common/utils.h"
 #include "../../entities/baseentity.h"
 #include "../../entities/mobentity.h"
+#include "../../entities/npcentity.h"
 #include "../../mob_modifier.h"
 #include "../../zone.h"
 #include "../ai_container.h"
 #include "lua/luautils.h"
+#include "utils/mobutils.h"
+#include "utils/zoneutils.h"
+#include "zone_entities.h"
 
 namespace
 {
@@ -192,7 +196,7 @@ bool CPathFind::PathInRange(const position_t& point, float range, uint8 pathFlag
 
         if (PEntity && !m_POwner->m_ignoreWallhack)
         {
-            result           = abs(m_POwner->loc.p.y - PEntity->loc.p.y) < m_POwner->loc.zone->m_navMesh->GetVerticalLimit() ? ValidPosition(PEntity->loc.p) : true;
+            result           = abs(m_POwner->loc.p.y - PEntity->loc.p.y) < Navigation::verticalLimit ? ValidPosition(PEntity->loc.p) : true;
             m_carefulPathing = result ? true : false;
         }
     }
@@ -272,7 +276,7 @@ void CPathFind::ResumePatrol()
 
 bool CPathFind::isNavMeshEnabled()
 {
-    return m_POwner->loc.zone && m_POwner->loc.zone->m_navMesh != nullptr;
+    return m_POwner->loc.zone && m_POwner->loc.zone->PNavigation->isMeshLoaded();
 }
 
 bool CPathFind::ValidPosition(const position_t& pos)
@@ -280,7 +284,7 @@ bool CPathFind::ValidPosition(const position_t& pos)
     TracyZoneScoped;
     if (isNavMeshEnabled())
     {
-        return m_POwner->loc.zone->m_navMesh->validPosition(pos);
+        return m_POwner->loc.zone->PNavigation->isValidPosition(pos);
     }
     else
     {
@@ -347,7 +351,7 @@ void CPathFind::FollowPath(time_point tick)
 
     if ((isNavMeshEnabled() && m_carefulPathing) || (isNavMeshEnabled() && m_POwner->loc.zone->m_zoneCarefulPathing))
     {
-        m_POwner->loc.zone->m_navMesh->snapToValidPosition(m_POwner->loc.p, targetPoint.position.y, false);
+        m_POwner->loc.zone->PNavigation->snapToMesh(m_POwner->loc.p, targetPoint.position.y, false);
     }
 
     if (m_maxDistance && m_distanceMoved >= m_maxDistance)
@@ -410,7 +414,7 @@ void CPathFind::StepTo(const position_t& pos, bool run)
         speed /= 2;
     }
 
-    float stepDistance = (speed / 10) / 2;
+    float stepDistance = (speed / 5) / 2;
     float distanceTo   = distance(m_POwner->loc.p, pos);
 
     // face point mob is moving towards
@@ -470,7 +474,7 @@ bool CPathFind::FindPath(const position_t& start, const position_t& end)
         return false;
     }
 
-    m_points       = m_POwner->loc.zone->m_navMesh->findPath(start, end);
+    m_points       = m_POwner->loc.zone->PNavigation->findSmoothPath(start, end);
     m_currentPoint = 0;
 
     if (m_points.empty())
@@ -499,18 +503,12 @@ bool CPathFind::FindRandomPath(const position_t& start, float maxRadius, uint8 m
     for (int i = 0; i < m_turnLength; i++)
     {
         // look for new point centered around the last point
-        auto status = m_POwner->loc.zone->m_navMesh->findRandomPosition(startPosition, maxRadius);
+        auto point = m_POwner->loc.zone->PNavigation->findRandomPosition(startPosition, maxRadius);
 
-        // couldn't find one point so just break out
-        if (status.first != 0)
-        {
-            return false;
-        }
-
-        m_turnPoints.push_back(status.second);
+        m_turnPoints.push_back(point.position);
         startPosition = m_turnPoints[i];
     }
-    m_points       = m_POwner->loc.zone->m_navMesh->findPath(start, m_turnPoints[0]);
+    m_points       = m_POwner->loc.zone->PNavigation->findSmoothPath(start, m_turnPoints[0]);
     m_currentPoint = 0;
 
     return !m_points.empty();
@@ -530,7 +528,7 @@ bool CPathFind::FindClosestPath(const position_t& start, const position_t& end)
         return false;
     }
 
-    m_points       = m_POwner->loc.zone->m_navMesh->findPath(start, end);
+    m_points       = m_POwner->loc.zone->PNavigation->findSmoothPath(start, end);
     m_currentPoint = 0;
     m_points.push_back({ end, 0 }); // this prevents exploits with navmesh / impassible terrain
 
@@ -615,19 +613,15 @@ bool CPathFind::AtPoint(const position_t& pos)
 
 bool CPathFind::InWater()
 {
-    if (isNavMeshEnabled())
-    {
-        return m_POwner->loc.zone->m_navMesh->inWater(m_POwner->loc.p);
-    }
-
-    return false;
+    return m_POwner->loc.zone->PNavigation->isInWater(m_POwner->loc.p);
 }
 
 bool CPathFind::CanSeePoint(const position_t& point, bool lookOffMesh)
 {
     if (isNavMeshEnabled())
     {
-        return m_POwner->loc.zone->m_navMesh->raycast(m_POwner->loc.p, point, lookOffMesh);
+        position_t hit;
+        return m_POwner->loc.zone->PNavigation->raycast(m_POwner->loc.p, point, hit);
     }
 
     return true;
@@ -636,6 +630,11 @@ bool CPathFind::CanSeePoint(const position_t& point, bool lookOffMesh)
 const position_t& CPathFind::GetDestination() const
 {
     return m_points.back().position;
+}
+
+std::vector<pathpoint_t> CPathFind::GetPath()
+{
+    return m_points;
 }
 
 void CPathFind::SetCarefulPathing(bool careful)
