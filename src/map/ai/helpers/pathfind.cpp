@@ -28,6 +28,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 #include "../../zone.h"
 #include "../ai_container.h"
 #include "lua/luautils.h"
+#include "zone.h"
 
 namespace
 {
@@ -655,14 +656,9 @@ bool CPathFind::InWater()
     return false;
 }
 
-bool CPathFind::CanSeePoint(const position_t& point, bool lookOffMesh)
+bool CPathFind::CanSeePoint(const position_t& pos)
 {
-    if (isNavMeshEnabled())
-    {
-        return m_POwner->loc.zone->m_navMesh->raycast(m_POwner->loc.p, point, lookOffMesh);
-    }
-
-    return true;
+  return m_POwner->loc.zone->lineOfSight->CanEntitySee(m_POwner, pos);
 }
 
 const position_t& CPathFind::GetDestination() const

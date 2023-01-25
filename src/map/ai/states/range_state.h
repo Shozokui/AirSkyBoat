@@ -48,8 +48,8 @@ protected:
     }
     virtual bool Update(time_point tick) override;
     virtual void Cleanup(time_point tick) override;
-    bool         CanUseRangedAttack(CBattleEntity* PTarget);
     bool         HasMoved();
+    bool         CanUseRangedAttack(CBattleEntity* PTarget, bool isEndOfAttack);
 
 private:
     CBattleEntity* const m_PEntity;

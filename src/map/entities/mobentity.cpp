@@ -359,7 +359,7 @@ bool CMobEntity::CanLink(position_t* pos, int16 superLink)
         return false;
     }
 
-    if (!PAI->PathFind->CanSeePoint(*pos))
+    if (!CanSeeTarget(*pos))
     {
         return false;
     }
