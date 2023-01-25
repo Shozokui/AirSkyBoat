@@ -636,6 +636,8 @@ public:
     uint8  GetZoneAnimation();
     uint32 GetZoneAnimStartTime();
     uint16 GetZoneAnimLength();
+    void   LoadNavMesh();
+    void   LoadZoneLos();
 
 private:
     ZONEID         m_zoneID;
@@ -663,11 +665,9 @@ private:
     triggerAreaList_t m_triggerAreaList;
     zoneLineList_t    m_zoneLineList;
 
+    void LoadZoneSettings();
     void LoadZoneLines();
     void LoadZoneWeather();
-    void LoadZoneSettings();
-    void LoadNavMesh();
-    void LoadZoneLos();
 
     CTreasurePool* m_TreasurePool;
 
