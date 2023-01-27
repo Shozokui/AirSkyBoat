@@ -38,10 +38,14 @@ CBaseEntity::CBaseEntity()
 , animation(0)
 , animationsub(0)
 , speed(50 + settings::get<int8>("map.SPEED_MOD")) // It is downright dumb to init every entity at PLAYER speed, but until speed is reworked this hack stays.
-, speedsub(50)                                     // Retail does NOT adjust this when speed is adjusted.
+, speedsub(40)                                     // Retail does NOT adjust this when speed is adjusted.
 , namevis(0)
 , allegiance(ALLEGIANCE_TYPE::MOB)
 , updatemask(0)
+, animBegin(0)
+, animPath(0)
+, animStart(false)
+, manualConfig(false)
 , isRenamed(false)
 , m_bReleaseTargIDOnDisappear(false)
 , spawnAnimation(SPAWN_ANIMATION::NORMAL)
@@ -50,23 +54,6 @@ CBaseEntity::CBaseEntity()
 , PInstance(nullptr)
 , m_nextUpdateTimer(std::chrono::steady_clock::now())
 {
-    id       = 0;
-    targid   = 0;
-    m_TargID = 0;
-
-    isRenamed    = false;
-    animation    = 0;
-    animationsub = 0;
-    speed        = 50 + settings::get<int8>("map.SPEED_MOD"); // It is downright dumb to init every entity at PLAYER speed, but until speed is reworked this hack stays.
-    speedsub     = 40;                                        // Retail does NOT adjust this when speed is adjusted.
-    namevis      = 0;
-    updatemask   = 0;
-    PBattlefield = nullptr;
-    PInstance    = nullptr;
-    animStart    = false;
-    animPath     = 0;
-    animBegin    = 0;
-    manualConfig = false;
 }
 
 CBaseEntity::~CBaseEntity()
