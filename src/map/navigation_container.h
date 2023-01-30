@@ -142,7 +142,6 @@ public:
     void reloadMesh();
 
 private:
-    uint16      m_zoneID;
     float       m_agentRadius;
     AreaCostMap m_areaCosts = {
         { POLYAREA_GROUND, 1.0f },
@@ -162,8 +161,6 @@ private:
     dtPolyRef      m_startRef;
     dtPolyRef      m_endRef;
     dtPolyRef      m_polys[Navigation::MAX_POLYS];
-    dtPolyRef      m_parent[Navigation::MAX_POLYS];
-    dtPolyRef      m_pathInterPolys[Navigation::MAX_POLYS];
     dtPolyRef      m_straightPathPolys[Navigation::MAX_POLYS];
 
     //-- Pathfinding Variables
@@ -174,23 +171,12 @@ private:
     PathFlags m_straightPathFlags[Navigation::MAX_POLYS];
     int       m_nsmoothpath = 0;
     float     m_smoothPath[Navigation::MAX_SMOOTH * 3];
-    int       m_nrandPoints = 0;
     float     m_spos[3];
     float     m_epos[3];
     bool      m_hitResult = false;
     float     m_hitPos[3];
     float     m_hitNormal[3];
-    float     m_distanceToWall = 0.0f;
-    float     m_neighborhoodRadius;
-    float     m_randomRadius;
-    int       m_pathIterNum       = 0;
-    int       m_pathIterPolyCount = 0;
-    int       m_steerPolyCount    = 0;
-    float     m_prevIterPos[3];
-    float     m_filterPos[3];
-    float     m_steerPos[3];
-    float     m_targetPos[3];
-    float     m_steerPoints[Navigation::MAX_STEER_POINTS * 3];
+    int       m_pathIterNum = 0;
 
     void resetFilter();
     void applyFilter(unsigned short includePolyFlags, unsigned short excludePolyFlags);

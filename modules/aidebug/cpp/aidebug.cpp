@@ -1,12 +1,12 @@
-﻿#include "src/common/mmo.h"
-#include "src/map/ai/ai_container.h"
-#include "src/map/entities/mobentity.h"
-#include "src/map/entities/npcentity.h"
-#include "src/map/mob_modifier.h"
-#include "src/map/utils/mobutils.h"
-#include "src/map/utils/moduleutils.h"
-#include "src/map/zone.h"
-#include "src/map/zone_entities.h"
+﻿#include "../src/common/mmo.h"
+#include "../src/map/ai/ai_container.h"
+#include "../src/map/entities/mobentity.h"
+#include "../src/map/entities/npcentity.h"
+#include "../src/map/mob_modifier.h"
+#include "../src/map/utils/mobutils.h"
+#include "../src/map/utils/moduleutils.h"
+#include "../src/map/zone.h"
+#include "../src/map/zone_entities.h"
 
 #include <vector>
 

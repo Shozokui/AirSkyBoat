@@ -84,7 +84,11 @@ function(set_project_warnings project_name)
       -Wduplicated-cond        # warn if if / else chain has duplicated conditions
       -Wduplicated-branches    # warn if if / else branches have duplicated code
       -Wlogical-op             # warn about logical operations being used where bitwise were probably wanted
+<<<<<<< HEAD
       -Wuseless-cast           # warn if you perform a cast to the same type
+=======
+
+>>>>>>> 8d952f3567 ([deps] Get spdlog through CPM)
       # TODO: Remove this exception
       -Wno-useless-cast           # warn if you perform a cast to the same type
 
