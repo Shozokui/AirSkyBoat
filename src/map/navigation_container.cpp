@@ -462,7 +462,7 @@ bool CNavigationContainer::isInRange(const position_t& t_start, const position_t
     return Navigation::dtInRange(m_spos, m_epos, t_distance, t_h);
 }
 
-bool CNavigationContainer::raycast(const position_t& t_start, const position_t& t_end, position_t& hit)
+bool CNavigationContainer::raycast(const position_t& t_start, const position_t& t_end)
 {
     TracyZoneScoped;
 
@@ -526,7 +526,6 @@ bool CNavigationContainer::raycast(const position_t& t_start, const position_t& 
         m_hitPos[1] = h;
     }
 
-    Navigation::detourToGamePosition(hit, m_hitPos);
     return m_hitResult;
 }
 

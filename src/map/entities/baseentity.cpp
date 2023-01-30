@@ -167,9 +167,9 @@ bool CBaseEntity::CanSeeTarget(const position_t& targetPointBase, bool fallbackN
     {
         return loc.zone->lineOfSight->CanEntitySee(this, targetPointBase);
     }
-    else if (fallbackNavMesh && loc.zone->m_navMesh)
+    else if (fallbackNavMesh && loc.zone->PNavigation->isMeshLoaded())
     {
-        return loc.zone->m_navMesh->raycast(loc.p, targetPointBase);
+        return loc.zone->PNavigation->raycast(loc.p, targetPointBase);
     }
 
     return true;

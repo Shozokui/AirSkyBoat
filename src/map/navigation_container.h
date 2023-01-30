@@ -133,7 +133,7 @@ public:
                             unsigned short excludePolyFlags = 0) -> pathpoint_t;
     bool findClosestValidPoint(const position_t& t_start, float* t_point);
     bool findFurthestValidPoint(const position_t& t_start, const position_t& t_end, float* t_point);
-    bool raycast(const position_t& t_start, const position_t& t_end, position_t& hit);
+    bool raycast(const position_t& t_start, const position_t& t_end);
     void snapToMesh(position_t& t_pos, float t_targetY, bool t_force = false);
 
     //-- Util
