@@ -1,19 +1,19 @@
-﻿#include "../src/common/mmo.h"
-#include "../src/map/ai/ai_container.h"
-#include "../src/map/entities/mobentity.h"
-#include "../src/map/entities/npcentity.h"
-#include "../src/map/mob_modifier.h"
-#include "../src/map/utils/mobutils.h"
-#include "../src/map/utils/moduleutils.h"
-#include "../src/map/zone.h"
-#include "../src/map/zone_entities.h"
+﻿#include "ai/ai_container.h"
+#include "common/mmo.h"
+#include "entities/mobentity.h"
+#include "entities/npcentity.h"
+#include "mob_modifier.h"
+#include "utils/mobutils.h"
+#include "utils/moduleutils.h"
+#include "zone.h"
+#include "zone_entities.h"
 
 #include <vector>
 
 class AIDebugModule : public CPPModule
 {
     std::map<uint16, std::vector<CBaseEntity*>> m_entities;
-    std::map<uint16, int>                       m_used;
+    std::map<uint16, uint16>                    m_used;
 
     void OnInit() override
     {
@@ -80,7 +80,7 @@ class AIDebugModule : public CPPModule
         auto path     = PMob->PAI->PathFind->GetPath();
         auto rendered = std::vector<pathpoint_t>();
 
-        for (int i = 0; i < path.size(); i++)
+        for (uint16 i = 0; i < path.size(); i++)
         {
             auto point = path[i];
             if (distance(player->loc.p, point.position) < 50)
@@ -89,8 +89,8 @@ class AIDebugModule : public CPPModule
             }
         }
 
-        m_used[PZone->GetID()] = static_cast<int>(rendered.size());
-        for (int i = 0; i < rendered.size(); i++)
+        m_used[PZone->GetID()] = static_cast<uint16>(rendered.size());
+        for (uint16 i = 0; i < rendered.size(); i++)
         {
             m_entities[PZone->GetID()][i]->loc.p.x        = rendered[i].position.x;
             m_entities[PZone->GetID()][i]->loc.p.y        = rendered[i].position.y;

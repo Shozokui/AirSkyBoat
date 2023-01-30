@@ -6,35 +6,35 @@ namespace Navigation
     {
         if (status & DT_WRONG_MAGIC)
         {
-            ShowError("Detour: Input data is not recognized.");
+            ShowDebug("Detour: Input data is not recognized.");
         }
         else if (status & DT_WRONG_VERSION)
         {
-            ShowError("Detour: Input data is in wrong version.");
+            ShowDebug("Detour: Input data is in wrong version.");
         }
         else if (status & DT_OUT_OF_MEMORY)
         {
-            ShowError("Detour: Operation ran out of memory.");
+            ShowDebug("Detour: Operation ran out of memory.");
         }
         else if (status & DT_INVALID_PARAM)
         {
-            ShowError("Detour: An input parameter was invalid.");
+            ShowDebug("Detour: An input parameter was invalid.");
         }
         else if (status & DT_BUFFER_TOO_SMALL)
         {
-            ShowError("Detour: Result buffer for the query was too small to store all results.");
+            ShowDebug("Detour: Result buffer for the query was too small to store all results.");
         }
         else if (status & DT_OUT_OF_NODES)
         {
-            ShowError("Detour: Query ran out of nodes during search.");
+            ShowDebug("Detour: Query ran out of nodes during search.");
         }
         else if (status & DT_PARTIAL_RESULT)
         {
-            ShowError("Detour: Query did not reach the end location, returning best guess.");
+            ShowDebug("Detour: Query did not reach the end location, returning best guess.");
         }
         else if (status & DT_ALREADY_OCCUPIED)
         {
-            ShowError("Detour: A tile has already been assigned to the given x,y coordinate");
+            ShowDebug("Detour: A tile has already been assigned to the given x,y coordinate");
         }
     }
 
@@ -366,13 +366,13 @@ bool CNavigationContainer::loadFromFile(std::string const& t_filename)
 
     if (m_navMesh == nullptr)
     {
-        ShowError("[NavigationContainer] Failed to allocate new dtNavMesh") return false;
+        ShowDebug("[NavigationContainer] Failed to allocate new dtNavMesh") return false;
     }
 
     dtStatus status = m_navMesh->init(&header.params);
     if (dtStatusFailed(status))
     {
-        ShowError("[NavigationContainer] Failed to read dtNavMesh header.") return false;
+        ShowDebug("[NavigationContainer] Failed to read dtNavMesh header.") return false;
     }
 
     for (int i = 0; i < header.numTiles; ++i)
@@ -445,7 +445,7 @@ bool CNavigationContainer::isValidPosition(const position_t& t_pos)
     auto status = m_query.findNearestPoly(m_spos, Navigation::smallPolyPickExt, &m_filter, &m_startRef, snearest);
     if (dtStatusFailed(status))
     {
-        ShowError("[NavigationContainer] isValidPosition failed to find starting position on dtNavMesh.");
+        ShowDebug("[NavigationContainer] isValidPosition failed to find starting position on dtNavMesh.");
         return false;
     }
 
@@ -476,20 +476,20 @@ bool CNavigationContainer::raycast(const position_t& t_start, const position_t& 
     polyStatus = m_query.findNearestPoly(m_spos, m_pickExtents, &m_filter, &m_startRef, 0);
     if (dtStatusFailed(polyStatus))
     {
-        ShowError(fmt::format("[NavigationContainer] Failed to find starting position on dtNavMesh ({}, {}, {})", t_start.x, t_start.y, t_start.z));
+        ShowDebug(fmt::format("[NavigationContainer] Failed to find starting position on dtNavMesh ({}, {}, {})", t_start.x, t_start.y, t_start.z));
         return false;
     }
 
     polyStatus = m_query.findNearestPoly(m_epos, m_pickExtents, &m_filter, &m_endRef, 0);
     if (dtStatusFailed(polyStatus))
     {
-        ShowError(fmt::format("[NavigationContainer] Failed to find end position on dtNavMesh ({}, {}, {})", t_end.x, t_end.y, t_end.z));
+        ShowDebug(fmt::format("[NavigationContainer] Failed to find end position on dtNavMesh ({}, {}, {})", t_end.x, t_end.y, t_end.z));
         return false;
     }
 
     if (!m_navMesh->isValidPolyRef(m_startRef) || !m_navMesh->isValidPolyRef(m_endRef))
     {
-        ShowError("[NavigationContainer] startRef or endRef are not valid poly references");
+        ShowDebug("[NavigationContainer] startRef or endRef are not valid poly references");
         return false;
     }
 
@@ -504,7 +504,7 @@ bool CNavigationContainer::raycast(const position_t& t_start, const position_t& 
     auto status = m_query.raycast(m_startRef, m_spos, m_epos, &m_filter, &t, m_hitNormal, m_polys, &m_npolys, Navigation::MAX_POLYS);
     if (dtStatusFailed(status))
     {
-        ShowError("[NavigationContainer] raycast failed raycast call");
+        ShowDebug("[NavigationContainer] raycast failed raycast call");
         Navigation::detourError(status);
         return false;
     }
@@ -550,20 +550,20 @@ std::vector<pathpoint_t> CNavigationContainer::findStraightPath(const position_t
     polyStatus = m_query.findNearestPoly(m_spos, m_pickExtents, &m_filter, &m_startRef, 0);
     if (dtStatusFailed(polyStatus))
     {
-        ShowError(fmt::format("[NavigationContainer] Failed to find starting position on dtNavMesh ({}, {}, {})", t_start.x, t_start.y, t_start.z));
+        ShowDebug(fmt::format("[NavigationContainer] Failed to find starting position on dtNavMesh ({}, {}, {})", t_start.x, t_start.y, t_start.z));
         return m_points;
     }
 
     polyStatus = m_query.findNearestPoly(m_epos, m_pickExtents, &m_filter, &m_endRef, 0);
     if (dtStatusFailed(polyStatus))
     {
-        ShowError(fmt::format("[NavigationContainer] Failed to find end position on dtNavMesh ({}, {}, {})", t_end.x, t_end.y, t_end.z));
+        ShowDebug(fmt::format("[NavigationContainer] Failed to find end position on dtNavMesh ({}, {}, {})", t_end.x, t_end.y, t_end.z));
         return m_points;
     }
 
     if (!m_navMesh->isValidPolyRef(m_startRef) || !m_navMesh->isValidPolyRef(m_endRef))
     {
-        ShowError("[NavigationContainer] startRef or endRef are not valid poly references");
+        ShowDebug("[NavigationContainer] startRef or endRef are not valid poly references");
         return m_points;
     }
 
@@ -626,20 +626,20 @@ std::vector<pathpoint_t> CNavigationContainer::findSmoothPath(const position_t& 
     polyStatus = m_query.findNearestPoly(m_spos, m_pickExtents, &m_filter, &m_startRef, 0);
     if (dtStatusFailed(polyStatus))
     {
-        ShowError(fmt::format("[NavigationContainer] Failed to find starting position on dtNavMesh ({}, {}, {})", t_start.x, t_start.y, t_start.z));
+        ShowDebug(fmt::format("[NavigationContainer] Failed to find starting position on dtNavMesh ({}, {}, {})", t_start.x, t_start.y, t_start.z));
         return m_points;
     }
 
     polyStatus = m_query.findNearestPoly(m_epos, m_pickExtents, &m_filter, &m_endRef, 0);
     if (dtStatusFailed(polyStatus))
     {
-        ShowError(fmt::format("[NavigationContainer] Failed to find end position on dtNavMesh ({}, {}, {})", t_end.x, t_end.y, t_end.z));
+        ShowDebug(fmt::format("[NavigationContainer] Failed to find end position on dtNavMesh ({}, {}, {})", t_end.x, t_end.y, t_end.z));
         return m_points;
     }
 
     if (!m_navMesh->isValidPolyRef(m_startRef) || !m_navMesh->isValidPolyRef(m_endRef))
     {
-        ShowError("[NavigationContainer] startRef or endRef are not valid poly references");
+        ShowDebug("[NavigationContainer] startRef or endRef are not valid poly references");
         return m_points;
     }
 
@@ -799,13 +799,13 @@ pathpoint_t CNavigationContainer::findRandomPosition(const position_t& t_around,
     auto status = m_query.findNearestPoly(m_spos, Navigation::polyPickExt, &m_filter, &m_startRef, snearest);
     if (dtStatusFailed(status))
     {
-        ShowError(fmt::format("[NavigationContainer] findRandomPosition failed to find start point ({}, {}, {})", t_around.x, t_around.y, t_around.z));
+        ShowDebug(fmt::format("[NavigationContainer] findRandomPosition failed to find start point ({}, {}, {})", t_around.x, t_around.y, t_around.z));
         return {};
     }
 
     if (!m_navMesh->isValidPolyRef(m_startRef))
     {
-        ShowError("[NavigationContainer] findRandomPosition startRef was invalid.");
+        ShowDebug("[NavigationContainer] findRandomPosition startRef was invalid.");
         return {};
     }
 
@@ -816,7 +816,7 @@ pathpoint_t CNavigationContainer::findRandomPosition(const position_t& t_around,
 
     if (dtStatusFailed(status))
     {
-        ShowError("[NavigationContainer] findRandomPath Error");
+        ShowDebug("[NavigationContainer] findRandomPath Error");
         Navigation::detourError(status);
         return {};
     }
@@ -840,7 +840,7 @@ bool CNavigationContainer::findClosestValidPoint(const position_t& t_start, floa
     auto status = m_query.findNearestPoly(m_spos, Navigation::bigPolyPickExt, &m_filter, &m_startRef, t_point);
     if (dtStatusFailed(status))
     {
-        ShowError("[NavigationContainer] findClosestValidPoint Unable to any valid polys");
+        ShowDebug("[NavigationContainer] findClosestValidPoint Unable to any valid polys");
         return false;
     }
 
@@ -863,7 +863,7 @@ bool CNavigationContainer::findFurthestValidPoint(const position_t& t_start, con
     auto status = m_query.findNearestPoly(m_spos, Navigation::bigPolyPickExt, &m_filter, &m_startRef, startPoint);
     if (dtStatusFailed(status))
     {
-        ShowError("[NavigationContainer] findFurthestValidPoint failed to find poly");
+        ShowDebug("[NavigationContainer] findFurthestValidPoint failed to find poly");
         return false;
     }
 
@@ -873,7 +873,7 @@ bool CNavigationContainer::findFurthestValidPoint(const position_t& t_start, con
     status = m_query.moveAlongSurface(m_startRef, startPoint, m_epos, &m_filter, t_point, visited, &visitedCount, 16);
     if (dtStatusFailed(status))
     {
-        ShowError("[NavigationContainer] findFurthestValidPoint failed to find furthest point");
+        ShowDebug("[NavigationContainer] findFurthestValidPoint failed to find furthest point");
         return false;
     }
 
@@ -896,7 +896,7 @@ void CNavigationContainer::snapToMesh(position_t& t_pos, float t_targetY, bool t
     auto status = m_query.findNearestPoly(m_spos, Navigation::polyPickExt, &m_filter, &m_startRef, snearest);
     if (dtStatusFailed(status))
     {
-        ShowError(fmt::format("[NavigationContainer] snapToMesh failed to find valid poly on dtNavMesh for given position ({}, {}, {})", t_pos.x, t_pos.y, t_pos.z));
+        ShowDebug(fmt::format("[NavigationContainer] snapToMesh failed to find valid poly on dtNavMesh for given position ({}, {}, {})", t_pos.x, t_pos.y, t_pos.z));
         Navigation::detourError(status);
         return;
     }

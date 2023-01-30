@@ -509,7 +509,7 @@ void CZone::LoadNavMesh()
 
     if (!PNavigation->loadFromFile(file))
     {
-        ShowError(fmt::format("CZone::LoadNavMesh: Cannot load navmesh file ({})", file));
+        ShowDebug(fmt::format("CZone::LoadNavMesh: Cannot load navmesh file ({})", file));
     }
 }
 
