@@ -20,16 +20,16 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 */
 
 #include "pathfind.h"
-#include "../../../common/utils.h"
-#include "../../entities/baseentity.h"
-#include "../../entities/mobentity.h"
-#include "../../entities/npcentity.h"
-#include "../../mob_modifier.h"
-#include "../../zone.h"
-#include "../ai_container.h"
+#include "ai/ai_container.h"
+#include "common/utils.h"
+#include "entities/baseentity.h"
+#include "entities/mobentity.h"
+#include "entities/npcentity.h"
 #include "lua/luautils.h"
+#include "mob_modifier.h"
 #include "utils/mobutils.h"
 #include "utils/zoneutils.h"
+#include "zone.h"
 #include "zone_entities.h"
 
 namespace
@@ -450,6 +450,9 @@ void CPathFind::StepTo(const position_t& pos, bool run)
         m_POwner->loc.p.z += sinf(radians) * stepDistance;
     }
 
+    // 56 = 0x36
+    // 40 = 0x28
+    // 20 = 0x14
     m_POwner->loc.p.moving += (uint16)((0x36 * ((float)m_POwner->speed / 0x28)) - (0x14 * (mode - 1)));
 
     if (m_POwner->loc.p.moving > 0x2fff)

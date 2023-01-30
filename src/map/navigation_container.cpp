@@ -489,7 +489,6 @@ bool CNavigationContainer::raycast(const position_t& t_start, const position_t& 
 
     if (!m_navMesh->isValidPolyRef(m_startRef) || !m_navMesh->isValidPolyRef(m_endRef))
     {
-        ShowDebug("[NavigationContainer] startRef or endRef are not valid poly references");
         return false;
     }
 
@@ -563,7 +562,6 @@ std::vector<pathpoint_t> CNavigationContainer::findStraightPath(const position_t
 
     if (!m_navMesh->isValidPolyRef(m_startRef) || !m_navMesh->isValidPolyRef(m_endRef))
     {
-        ShowDebug("[NavigationContainer] startRef or endRef are not valid poly references");
         return m_points;
     }
 
@@ -639,7 +637,6 @@ std::vector<pathpoint_t> CNavigationContainer::findSmoothPath(const position_t& 
 
     if (!m_navMesh->isValidPolyRef(m_startRef) || !m_navMesh->isValidPolyRef(m_endRef))
     {
-        ShowDebug("[NavigationContainer] startRef or endRef are not valid poly references");
         return m_points;
     }
 
