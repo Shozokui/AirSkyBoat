@@ -47,7 +47,7 @@ class AIDebugModule : public CPPModule
             return;
         }
 
-        for (auto i = 0; i < m_pool.size(); i++)
+        for (uint16 i = 0; i < m_pool.size(); i++)
         {
             if (m_pool[i]->status != STATUS_TYPE::DISAPPEAR)
             {
