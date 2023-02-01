@@ -401,6 +401,34 @@ void CPathFind::FollowPath(time_point tick)
     }
 }
 
+void CPathFind::SnapToCollision(position_t& point)
+{
+    auto zone = zoneutils::GetZone(m_POwner->getZone());
+    if (zone != nullptr)
+    {
+        position_t downTarget{ point.x, point.y - 100, point.z, 0, 0 };
+        position_t upTarget{ point.x, point.y + 100, point.z, 0, 0 };
+        auto       hit = zone->lineOfSight->Raycast(point, downTarget);
+
+        if (hit.has_value())
+        {
+            point.x = hit->x;
+            point.y = hit->y;
+            point.z = hit->z;
+        }
+        else
+        {
+            hit = zone->lineOfSight->Raycast(point, upTarget);
+            if (hit.has_value())
+            {
+                point.x = hit->x;
+                point.z = hit->y;
+                point.z = hit->z;
+            }
+        }
+    }
+}
+
 void CPathFind::StepTo(const position_t& pos, bool run)
 {
     TracyZoneScoped;
@@ -429,6 +457,7 @@ void CPathFind::StepTo(const position_t& pos, bool run)
             m_POwner->loc.p.x = pos.x;
             m_POwner->loc.p.y = pos.y;
             m_POwner->loc.p.z = pos.z;
+            SnapToCollision(m_POwner->loc.p);
         }
         else
         {
@@ -437,6 +466,7 @@ void CPathFind::StepTo(const position_t& pos, bool run)
             m_POwner->loc.p.x += cosf(radians) * (distanceTo - m_distanceFromPoint);
             m_POwner->loc.p.y = pos.y;
             m_POwner->loc.p.z += sinf(radians) * (distanceTo - m_distanceFromPoint);
+            SnapToCollision(m_POwner->loc.p);
         }
     }
     else
@@ -448,6 +478,7 @@ void CPathFind::StepTo(const position_t& pos, bool run)
         m_POwner->loc.p.x += cosf(radians) * stepDistance;
         m_POwner->loc.p.y = pos.y;
         m_POwner->loc.p.z += sinf(radians) * stepDistance;
+        SnapToCollision(m_POwner->loc.p);
     }
 
     // 56 = 0x36
@@ -585,6 +616,16 @@ float CPathFind::GetRealSpeed()
     }
 
     return realSpeed;
+}
+
+float CPathFind::GetStepDistance(float speed)
+{
+    auto prevTick = m_POwner->PAI->getPrevTick();
+    auto tick     = m_POwner->PAI->getTick();
+    // Get the delta time between ticks to calculate distance per tick
+    auto delta    = std::chrono::duration<float>(tick - prevTick).count() / 60;
+    auto distance = speed * delta;
+    return distance;
 }
 
 bool CPathFind::IsFollowingPath()

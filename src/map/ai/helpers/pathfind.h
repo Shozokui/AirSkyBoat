@@ -99,9 +99,14 @@ public:
 
     // calculate speed of mob with mode, mod_speed, etc
     float GetRealSpeed();
+    // calculate the step distance of a mob based on speed
+    float GetStepDistance(float speed);
 
     // look at the given point
     void LookAt(const position_t& point);
+
+    // given a point, snap to the collision mesh
+    void SnapToCollision(position_t& point);
 
     // clear current path
     void Clear();
