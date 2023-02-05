@@ -171,6 +171,30 @@ struct Vector3D
     {
         return sqrt(x * x + y * y + z * z);
     }
+
+    static Vector3D MoveTowards(Vector3D start, Vector3D end, float maxDistanceDelta)
+    {
+        auto a    = end - start;
+        auto mag  = a.magnitude();
+        auto mult = mag * maxDistanceDelta;
+
+        if (mag <= maxDistanceDelta || mag == 0.0f)
+        {
+            return end;
+        }
+
+        return start + a / mult;
+    }
+
+    static Vector3D FromPosition(position_t const& pos)
+    {
+        return { pos.x, pos.y, pos.z };
+    }
+
+    position_t toPosition()
+    {
+        return { x, y, z, 0, 0 };
+    }
 };
 
 struct Triangle

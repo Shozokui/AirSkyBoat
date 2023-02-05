@@ -73,12 +73,12 @@ struct NavMeshTileHeader
 
 namespace Navigation
 {
-    constexpr float    smallPolyPickExt[3]  = { 0.5f, 1.0f, 0.5f };
-    constexpr float    polyPickExt[3]       = { 5.0f, 10.0f, 5.0f };
+    constexpr float    smallPolyPickExt[3]  = { 2.0f, 2.0f, 2.0f };
+    constexpr float    polyPickExt[3]       = { 10.0f, 10.0f, 10.0f };
     constexpr float    skinnyPolyPickExt[3] = { 0.01f, 10.0f, 0.01f };
     constexpr float    bigPolyPickExt[3]    = { 30.0f, 60.0f, 30.0f };
     constexpr float    verticalLimit        = 0.25f;
-    static const float PATH_STEP_SIZE       = 3.0f;
+    static const float PATH_STEP_SIZE       = 2.0f;
     static const float PATH_SLOP            = 0.1f;
     static const int   MAX_POLYS            = 256;
     static const int   MAX_SMOOTH           = 2048;
@@ -135,6 +135,7 @@ public:
     bool findFurthestValidPoint(const position_t& t_start, const position_t& t_end, float* t_point);
     bool raycast(const position_t& t_start, const position_t& t_end);
     void snapToMesh(position_t& t_pos, float t_targetY, bool t_force = false);
+    void snapToMesh(position_t& t_pos);
 
     //-- Util
     bool isMeshLoaded();

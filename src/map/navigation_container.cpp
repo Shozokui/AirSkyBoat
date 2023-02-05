@@ -877,6 +877,12 @@ bool CNavigationContainer::findFurthestValidPoint(const position_t& t_start, con
     return true;
 }
 
+void CNavigationContainer::snapToMesh(position_t& t_pos)
+{
+    TracyZoneScoped;
+    snapToMesh(t_pos, t_pos.y, true);
+}
+
 void CNavigationContainer::snapToMesh(position_t& t_pos, float t_targetY, bool t_force)
 {
     TracyZoneScoped;

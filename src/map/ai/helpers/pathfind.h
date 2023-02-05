@@ -107,6 +107,8 @@ public:
 
     // given a point, snap to the collision mesh
     void SnapToCollision(position_t& point);
+    // given a point, snap to closest navigable poly
+    void SnapToPoly(position_t& point);
 
     // clear current path
     void Clear();

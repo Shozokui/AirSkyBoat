@@ -342,6 +342,100 @@ struct position_t
     , rotation(_rotation)
     {
     }
+
+    position_t operator+(position_t const& other)
+    {
+        return position_t{ x + other.x, y + other.y, z + other.z, moving, rotation };
+    }
+
+    position_t& operator+=(position_t const& other)
+    {
+        x += other.x;
+        y += other.y;
+        z += other.z;
+        return *this;
+    }
+
+    position_t operator-(position_t const& other)
+    {
+        return position_t{ x - other.x, y - other.y, z - other.z, moving, rotation };
+    }
+
+    position_t& operator-=(position_t const& other)
+    {
+        x -= other.x;
+        y -= other.y;
+        z -= other.z;
+        return *this;
+    }
+
+    position_t operator*(float value)
+    {
+        return position_t{ x * value, y * value, z * value, moving, rotation };
+    }
+
+    position_t& operator*=(float value)
+    {
+        x *= value;
+        y *= value;
+        z *= value;
+        return *this;
+    }
+
+    position_t operator/(float value)
+    {
+        return position_t{ x / value, y / value, z / value, moving, rotation };
+    }
+
+    position_t& operator/=(float value)
+    {
+        x /= value;
+        y /= value;
+        z /= value;
+        return *this;
+    }
+
+    position_t crossProduct(position_t const& other) const
+    {
+        float ni = y * other.z - z * other.y;
+        float nj = z * other.x - x * other.z;
+        float nk = x * other.y - y * other.x;
+        return position_t{ ni, nj, nk, moving, rotation };
+    }
+
+    float dotProduct(position_t const& other) const
+    {
+        return x * other.x + y * other.y + z * other.z;
+    }
+
+    float magnitude() const
+    {
+        return sqrt(x * x + y * y + z * z);
+    }
+
+    position_t moveTowards(position_t target, float maxDistance)
+    {
+        auto current = *this;
+        auto a       = target - current;
+        auto mag     = a.magnitude();
+        auto mult    = mag * maxDistance;
+
+        if (mag <= maxDistance || mag == 0.0f)
+        {
+            return target;
+        }
+
+        auto targ = current + a / mult;
+        return targ;
+    }
+
+    position_t& lerp(position_t target, float delta)
+    {
+        x += (target.x - x) * delta;
+        y += (target.y - y) * delta;
+        z += (target.z - z) * delta;
+        return *this;
+    }
 };
 
 struct stats_t

@@ -25,6 +25,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 #include "entities/baseentity.h"
 #include "entities/mobentity.h"
 #include "entities/npcentity.h"
+#include "los/common.h"
 #include "lua/luautils.h"
 #include "mob_modifier.h"
 #include "utils/mobutils.h"
@@ -349,11 +350,6 @@ void CPathFind::FollowPath(time_point tick)
 
     pathpoint_t targetPoint = m_points[m_currentPoint];
 
-    if ((isNavMeshEnabled() && m_carefulPathing) || (isNavMeshEnabled() && m_POwner->loc.zone->m_zoneCarefulPathing))
-    {
-        m_POwner->loc.zone->PNavigation->snapToMesh(m_POwner->loc.p, targetPoint.position.y, false);
-    }
-
     if (m_maxDistance && m_distanceMoved >= m_maxDistance)
     {
         // if I have a max distance, check to stop me
@@ -404,28 +400,45 @@ void CPathFind::FollowPath(time_point tick)
 void CPathFind::SnapToCollision(position_t& point)
 {
     auto zone = zoneutils::GetZone(m_POwner->getZone());
-    if (zone != nullptr)
+    if (zone != nullptr && zone->lineOfSight != nullptr)
     {
-        position_t downTarget{ point.x, point.y - 100, point.z, 0, 0 };
-        position_t upTarget{ point.x, point.y + 100, point.z, 0, 0 };
-        auto       hit = zone->lineOfSight->Raycast(point, downTarget);
+        auto       zoneLos = zone->lineOfSight;
+        position_t origin{ point.x, point.y - 2.5f, point.z, 0, 0 };
+        position_t downTarget{ point.x, point.y - 5, point.z, 0, 0 };
+        position_t upTarget{ point.x, point.y + 2, point.z, 0, 0 };
+        auto       hit = zoneLos->Raycast(origin, downTarget);
 
         if (hit.has_value())
         {
-            point.x = hit->x;
-            point.y = hit->y;
-            point.z = hit->z;
+            if (std::abs(point.y - hit->y) < 5)
+            {
+                point.x = hit->x;
+                point.y = hit->y;
+                point.z = hit->z;
+            }
         }
         else
         {
             hit = zone->lineOfSight->Raycast(point, upTarget);
             if (hit.has_value())
             {
-                point.x = hit->x;
-                point.z = hit->y;
-                point.z = hit->z;
+                if (std::abs(point.y - hit->y) < 5)
+                {
+                    point.x = hit->x;
+                    point.y = hit->y;
+                    point.z = hit->z;
+                }
             }
         }
+    }
+}
+
+void CPathFind::SnapToPoly(position_t& point)
+{
+    auto zone = zoneutils::GetZone(m_POwner->getZone());
+    if (zone != nullptr && zone->PNavigation != nullptr && zone->PNavigation->isMeshLoaded())
+    {
+        zone->PNavigation->snapToMesh(point);
     }
 }
 
@@ -439,47 +452,28 @@ void CPathFind::StepTo(const position_t& pos, bool run)
     if (!run)
     {
         mode = 1;
-        speed /= 2;
+        // speed /= 2;
     }
-
-    float stepDistance = (speed / 5) / 2;
-    float distanceTo   = distance(m_POwner->loc.p, pos);
 
     // face point mob is moving towards
     LookAt(pos);
 
-    if (distanceTo <= m_distanceFromPoint + stepDistance)
-    {
-        m_distanceMoved += distanceTo - m_distanceFromPoint;
+    // Get the delta time between ticks to calculate distance per tick
+    auto prevTick  = m_POwner->PAI->getPrevTick();
+    auto tick      = m_POwner->PAI->getTick();
+    auto deltaTime = std::chrono::duration<float>(tick - prevTick).count();
 
-        if (m_distanceFromPoint == 0)
-        {
-            m_POwner->loc.p.x = pos.x;
-            m_POwner->loc.p.y = pos.y;
-            m_POwner->loc.p.z = pos.z;
-            SnapToCollision(m_POwner->loc.p);
-        }
-        else
-        {
-            float radians = (1 - (float)m_POwner->loc.p.rotation / 256) * 2 * (float)M_PI;
+    // Get Delta Distance (Maximum allowed movable distance, based on velocity)
+    auto distance = run ? speed * deltaTime : speed;
 
-            m_POwner->loc.p.x += cosf(radians) * (distanceTo - m_distanceFromPoint);
-            m_POwner->loc.p.y = pos.y;
-            m_POwner->loc.p.z += sinf(radians) * (distanceTo - m_distanceFromPoint);
-            SnapToCollision(m_POwner->loc.p);
-        }
-    }
-    else
-    {
-        m_distanceMoved += stepDistance;
-        // take a step towards target point
-        float radians = (1 - (float)m_POwner->loc.p.rotation / 256) * 2 * (float)M_PI;
+    // Calculate the move vector
+    auto move = m_POwner->loc.p.moveTowards(pos, distance);
 
-        m_POwner->loc.p.x += cosf(radians) * stepDistance;
-        m_POwner->loc.p.y = pos.y;
-        m_POwner->loc.p.z += sinf(radians) * stepDistance;
-        SnapToCollision(m_POwner->loc.p);
-    }
+    // Apply move vector to unit as translation.
+    m_POwner->loc.p.lerp(move, deltaTime);
+
+    // Snap move vector to navigable area
+    SnapToCollision(m_POwner->loc.p);
 
     // 56 = 0x36
     // 40 = 0x28
@@ -542,7 +536,7 @@ bool CPathFind::FindRandomPath(const position_t& start, float maxRadius, uint8 m
         m_turnPoints.push_back(point.position);
         startPosition = m_turnPoints[i];
     }
-    m_points       = m_POwner->loc.zone->PNavigation->findSmoothPath(start, m_turnPoints[0]);
+    m_points       = m_POwner->loc.zone->PNavigation->findStraightPath(start, m_turnPoints[0]);
     m_currentPoint = 0;
 
     return !m_points.empty();
@@ -599,7 +593,8 @@ float CPathFind::GetRealSpeed()
     // 'GetSpeed()' factors in movement bonuses such as map confs and modifiers.
     if (m_POwner->objtype != TYPE_NPC)
     {
-        realSpeed = ((CBattleEntity*)m_POwner)->GetSpeed();
+        auto PEntity = dynamic_cast<CBattleEntity*>(m_POwner);
+        realSpeed    = PEntity->GetSpeed();
     }
 
     // Lets not check mob things on non mobs
@@ -623,8 +618,8 @@ float CPathFind::GetStepDistance(float speed)
     auto prevTick = m_POwner->PAI->getPrevTick();
     auto tick     = m_POwner->PAI->getTick();
     // Get the delta time between ticks to calculate distance per tick
-    auto delta    = std::chrono::duration<float>(tick - prevTick).count() / 60;
-    auto distance = speed * delta;
+    auto delta    = std::chrono::duration<float>(tick - prevTick).count();
+    auto distance = speed * (speed * delta);
     return distance;
 }
 
