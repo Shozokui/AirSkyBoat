@@ -79,9 +79,11 @@
 #include <variant>
 #include <vector>
 
+#include "common/blowfish.h"
 #include "common/cbasetypes.h"
 #include "common/kernel.h"
 #include "common/logging.h"
+#include "common/md52.h"
 #include "common/mmo.h"
 #include "common/socket.h"
 #include "common/sql.h"
@@ -89,6 +91,7 @@
 #include "common/timer.h"
 #include "common/tracy.h"
 #include "common/utils.h"
+#include "common/version.h"
 #include "common/xirand.h"
 
 #include <concurrentqueue.h>
