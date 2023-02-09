@@ -163,11 +163,8 @@ void CParty::DisbandParty(bool playerInitiated)
             member->PParty = nullptr;
         }
     }
-
-    // TODO: This entire system needs rewriting to both:
-    //     : - Make it stable
-    //     : - Get rid of `delete this` and manage memory nicely
-    delete this; // cpp.sh allow
+    CParty* PParty = this;
+    destroy(PParty);
 }
 
 // Assign roles to group members (players only)
@@ -446,7 +443,8 @@ void CParty::PopMember(CBattleEntity* PEntity)
                 }
             }
         }
-        delete this; // cpp.sh allow
+        CParty* PParty = this;
+        destroy(PParty);
     }
     PEntity->PParty = nullptr;
 }
@@ -1095,7 +1093,7 @@ void CParty::PushPacket(uint32 senderID, uint16 ZoneID, CBasicPacket* packet)
             }
         }
     }
-    delete packet;
+    destroy(packet);
 }
 
 void CParty::PushEffectsPacket()

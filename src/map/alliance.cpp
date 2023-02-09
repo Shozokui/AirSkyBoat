@@ -107,10 +107,8 @@ void CAlliance::dissolveAlliance(bool playerInitiated)
 
         this->partyList.clear();
 
-        // TODO: This entire system needs rewriting to both:
-        //     : - Make it stable
-        //     : - Get rid of `delete this` and manage memory nicely
-        delete this; // cpp.sh allow
+        CAlliance* alliance = this;
+        destroy(alliance);
     }
 }
 

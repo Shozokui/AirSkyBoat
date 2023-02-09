@@ -141,10 +141,8 @@ void CTreasurePool::DelMember(CCharEntity* PChar)
 
     if (m_TreasurePoolType != TREASUREPOOL_ZONE && members.empty())
     {
-        // TODO: This entire system needs rewriting to both:
-        //     : - Make it stable
-        //     : - Get rid of `delete this` and manage memory nicely
-        delete this; // cpp.sh allow
+        CTreasurePool* PTreasurePool = this;
+        destroy(PTreasurePool);
         return;
     }
 }

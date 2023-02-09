@@ -441,8 +441,9 @@ uint32 packBitsLE(uint8* target, uint64 value, int32 byteOffset, int32 bitOffset
     }
 
     {
-        delete[] modifiedTarget;
+        destroy_arr(modifiedTarget);
     }
+
     return ((byteOffset << 3) + bitOffset + lengthInBit);
 }
 
@@ -498,7 +499,7 @@ uint64 unpackBitsLE(const uint8* target, int32 byteOffset, int32 bitOffset, uint
         retVal             = unpackBitsBE(&modifiedTarget[0], 0, newBitOffset, lengthInBit);
     }
 
-    destroy_arr(modifiedTarget);
+    destroy(modifiedTarget);
     return retVal;
 }
 
