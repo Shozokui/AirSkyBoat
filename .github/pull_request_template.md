@@ -21,4 +21,5 @@
 
 ## Special Deployment Considersings
 
-<!-- Include any steps that need to be taken when deploying to the live environment. Example: Need to run one_time_sql_conversion.sql -->
+<!-- Include any steps that need to be taken when deploying to the live environment. -->
+<!-- Example: Need to run one_time_sql_conversion.sql -->
