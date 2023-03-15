@@ -322,6 +322,8 @@ public:
     bool isRenamed; // tracks if the entity's name has been overidden. Defaults to false.
     bool m_bReleaseTargIDOnDisappear;
 
+    bool m_bReleaseTargIDOnDisappear;
+
     SPAWN_ANIMATION spawnAnimation;
 
     std::unique_ptr<CAIContainer> PAI;          // AI container
