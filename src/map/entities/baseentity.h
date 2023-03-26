@@ -320,7 +320,6 @@ public:
     bool manualConfig; // Is this entity configured with script
 
     bool isRenamed; // tracks if the entity's name has been overidden. Defaults to false.
-    bool m_bReleaseTargIDOnDisappear;
 
     bool m_bReleaseTargIDOnDisappear;
 

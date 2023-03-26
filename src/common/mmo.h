@@ -426,13 +426,14 @@ struct position_t
         }
 
         auto targ = current + a / mult;
+        targ.y    = target.y;
         return targ;
     }
 
     position_t& lerp(position_t target, float delta)
     {
         x += (target.x - x) * delta;
-        y += (target.y - y) * delta;
+        y += target.y;
         z += (target.z - z) * delta;
         return *this;
     }

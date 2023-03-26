@@ -887,7 +887,7 @@ void CNavigationContainer::snapToMesh(position_t& t_pos, float t_targetY, bool t
 {
     TracyZoneScoped;
 
-    if (!isMeshLoaded() || !t_targetY || (!t_force && abs(t_pos.y - t_targetY) < 0.1f))
+    if (!isMeshLoaded() || !t_targetY || (!t_force && abs(t_pos.y - t_targetY) > Navigation::verticalLimit))
     {
         return;
     }

@@ -828,36 +828,36 @@ void CMobController::Move()
                     if (currentDistance > PMob->GetMeleeRange())
                     {
                         // try to find path towards target
-                        PMob->PAI->PathFind->PathInRange(PTarget->loc.p, attack_range - 0.2f, PATHFLAG_RUN);
+                        PMob->PAI->PathFind->PathInRange(PTarget->loc.p, attack_range - 0.2f, PATHFLAG_RUN, true);
                     }
                 }
                 else if (distanceSquared(PMob->PAI->PathFind->GetDestination(), PTarget->loc.p) > 10)
                 {
                     // try to find path towards target
-                    PMob->PAI->PathFind->PathInRange(PTarget->loc.p, attack_range - 0.2f, PATHFLAG_RUN);
+                    PMob->PAI->PathFind->PathInRange(PTarget->loc.p, attack_range - 0.2f, PATHFLAG_RUN, true);
                 }
 
                 PMob->PAI->PathFind->FollowPath(m_Tick);
 
                 // Only check if stuck every 2s, this prevents overlap or interference with
                 // PathFind following path if the mob's move speed is slow.
-                if (m_Tick - m_StuckTick >= 2s)
-                {
-                    m_StuckTick = m_Tick;
+                // if (m_Tick - m_StuckTick >= 2s)
+                // {
+                //     m_StuckTick = m_Tick;
 
-                    // Keep a record of the last known position to check if we need
-                    // to manually intervene to move the mob.
-                    UpdateLastKnownPosition();
+                //     // Keep a record of the last known position to check if we need
+                //     // to manually intervene to move the mob.
+                //     UpdateLastKnownPosition();
 
-                    // Check if the mob is stuck, if stuck, directly intervene
-                    // by stepping to the player. This fixes people being able to hold mobs
-                    // because they can't find a path around to the player's position.
-                    if (IsStuck() && PTarget != nullptr)
-                    {
-                        PMob->PAI->PathFind->WarpTo(PTarget->loc.p);
-                        DebugNavmesh("Target is stuck! Porting them to player.")
-                    }
-                }
+                //     // Check if the mob is stuck, if stuck, directly intervene
+                //     // by stepping to the player. This fixes people being able to hold mobs
+                //     // because they can't find a path around to the player's position.
+                //     if (IsStuck() && PTarget != nullptr)
+                //     {
+                //         PMob->PAI->PathFind->WarpTo(PTarget->loc.p);
+                //         DebugNavmesh("Target is stuck! Porting them to player.")
+                //     }
+                // }
 
                 if (!PMob->PAI->PathFind->IsFollowingPath())
                 {

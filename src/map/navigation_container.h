@@ -73,16 +73,16 @@ struct NavMeshTileHeader
 
 namespace Navigation
 {
-    constexpr float    smallPolyPickExt[3]  = { 2.0f, 2.0f, 2.0f };
+    constexpr float    smallPolyPickExt[3]  = { 5.0f, 5.0f, 5.0f };
     constexpr float    polyPickExt[3]       = { 10.0f, 10.0f, 10.0f };
-    constexpr float    skinnyPolyPickExt[3] = { 0.01f, 10.0f, 0.01f };
+    constexpr float    skinnyPolyPickExt[3] = { 5.0f, 10.0f, 5.0f };
     constexpr float    bigPolyPickExt[3]    = { 30.0f, 60.0f, 30.0f };
-    constexpr float    verticalLimit        = 0.25f;
-    static const float PATH_STEP_SIZE       = 2.0f;
-    static const float PATH_SLOP            = 0.1f;
+    constexpr float    verticalLimit        = 10.0f;
+    static const float PATH_STEP_SIZE       = 5.0f;
+    static const float PATH_SLOP            = 0.5f;
     static const int   MAX_POLYS            = 256;
     static const int   MAX_SMOOTH           = 2048;
-    static const int   MAX_STEER_POINTS     = 5;
+    static const int   MAX_STEER_POINTS     = 10;
     static const int   NAVMESHSET_MAGIC     = 'M' << 24 | 'S' << 16 | 'E' << 8 | 'T'; // 'MSET'
     static const int   NAVMESHSET_VERSION   = 1;
 

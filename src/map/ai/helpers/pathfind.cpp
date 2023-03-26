@@ -157,7 +157,7 @@ bool CPathFind::PathInRange(const position_t& point, float range, uint8 pathFlag
 
     bool result = PathTo(point, pathFlags, false);
 
-    if (m_POwner->objtype == TYPE_MOB && !m_POwner->loc.zone->m_updatedNavmesh) // Target is too high.
+    if (m_POwner->objtype == TYPE_MOB) // Target is too high.
     {
         auto PMob = static_cast<CMobEntity*>(m_POwner);
 
@@ -190,8 +190,7 @@ bool CPathFind::PathInRange(const position_t& point, float range, uint8 pathFlag
         }
     }
 
-    if (m_POwner->objtype == TYPE_MOB &&
-        m_POwner->loc.zone->m_updatedNavmesh)
+    if (m_POwner->objtype == TYPE_MOB)
     {
         auto PEntity = dynamic_cast<CBattleEntity*>(m_POwner)->GetBattleTarget();
 
@@ -403,31 +402,20 @@ void CPathFind::SnapToCollision(position_t& point)
     if (zone != nullptr && zone->lineOfSight != nullptr)
     {
         auto       zoneLos = zone->lineOfSight;
-        position_t origin{ point.x, point.y - 2.5f, point.z, 0, 0 };
-        position_t downTarget{ point.x, point.y - 5, point.z, 0, 0 };
-        position_t upTarget{ point.x, point.y + 2, point.z, 0, 0 };
-        auto       hit = zoneLos->Raycast(origin, downTarget);
+        position_t origin{ point.x, point.y, point.z, 0, 0 };
 
-        if (hit.has_value())
+        std::vector<position_t> targets = {
+            { point.x, point.y - 1, point.z, 0, 0 },
+            { point.x, point.y + 1, point.z, 0, 0 },
+        };
+
+        for (auto target : targets)
         {
-            if (std::abs(point.y - hit->y) < 5)
-            {
-                point.x = hit->x;
-                point.y = hit->y;
-                point.z = hit->z;
-            }
-        }
-        else
-        {
-            hit = zone->lineOfSight->Raycast(point, upTarget);
+            auto hit = zoneLos->Raycast(origin, target);
             if (hit.has_value())
             {
-                if (std::abs(point.y - hit->y) < 5)
-                {
-                    point.x = hit->x;
-                    point.y = hit->y;
-                    point.z = hit->z;
-                }
+                point.y = hit->y;
+                return;
             }
         }
     }
@@ -452,35 +440,77 @@ void CPathFind::StepTo(const position_t& pos, bool run)
     if (!run)
     {
         mode = 1;
-        // speed /= 2;
+        speed /= 2;
     }
-
-    // face point mob is moving towards
-    LookAt(pos);
 
     // Get the delta time between ticks to calculate distance per tick
     auto prevTick  = m_POwner->PAI->getPrevTick();
     auto tick      = m_POwner->PAI->getTick();
-    auto deltaTime = std::chrono::duration<float>(tick - prevTick).count();
+    auto deltaTime = std::chrono::duration<float>(tick - prevTick).count() / 1000;
 
-    // Get Delta Distance (Maximum allowed movable distance, based on velocity)
-    auto distance = run ? speed * deltaTime : speed;
+    // Get const step distance & measure distance to target
+    auto stepDistance = (speed / 10) / 2;
+    auto distanceTo   = distance(m_POwner->loc.p, pos);
 
-    // Calculate the move vector
-    auto move = m_POwner->loc.p.moveTowards(pos, distance);
+    // face point mob is moving towards
+    LookAt(pos);
 
-    // Apply move vector to unit as translation.
-    m_POwner->loc.p.lerp(move, deltaTime);
+    // Store copy of current location
+    auto loc = position_t{
+        m_POwner->loc.p.x,
+        m_POwner->loc.p.y,
+        m_POwner->loc.p.z,
+        m_POwner->loc.p.moving,
+        m_POwner->loc.p.rotation
+    };
 
-    // Snap move vector to navigable area
-    SnapToCollision(m_POwner->loc.p);
+    // Handle Movement / Distances
+    if (distanceTo <= m_distanceFromPoint + stepDistance) // Move at full speed
+    {
+        m_distanceMoved += distanceTo - m_distanceFromPoint;
 
-    // 56 = 0x36
-    // 40 = 0x28
-    // 20 = 0x14
-    m_POwner->loc.p.moving += (uint16)((0x36 * ((float)m_POwner->speed / 0x28)) - (0x14 * (mode - 1)));
+        // Arrived, set position to point
+        if (m_distanceFromPoint == 0)
+        {
+            loc.x = pos.x;
+            loc.y = pos.y;
+            loc.z = pos.z;
+        }
+        else // Need to lerp between
+        {
+            float radians = (1 - (float)m_POwner->loc.p.rotation / 256) * 2 * (float)M_PI;
 
-    if (m_POwner->loc.p.moving > 0x2fff)
+            loc.x += cosf(radians) * (distanceTo - m_distanceFromPoint);
+            loc.y = pos.y;
+            loc.z += sinf(radians) * (distanceTo - m_distanceFromPoint);
+        }
+    }
+    else
+    {
+        m_distanceMoved += stepDistance + (stepDistance * deltaTime);
+
+        // take a step towards target point
+        float radians = (1 - (float)m_POwner->loc.p.rotation / 256) * 2 * (float)M_PI;
+
+        loc.x += cosf(radians) * stepDistance + (stepDistance * deltaTime);
+        loc.y = pos.y;
+        loc.z += sinf(radians) * stepDistance + (stepDistance * deltaTime);
+    }
+
+    // ShowDebug(fmt::format("Pre-Snap: {}, {}, {}", loc.x, loc.y, loc.z));
+    SnapToPoly(loc);
+    // SnapToCollision(loc);
+    // ShowDebug(fmt::format("Post-Snap: {}, {}, {}", loc.x, loc.y, loc.z));
+
+    // Assign the modified location
+    m_POwner->loc.p = loc;
+
+    // Determine moving delta
+    auto moving = ((m_distanceMoved + 56 + (56 * deltaTime)) * (m_POwner->speed / 40)) - (20 * (mode - 1));
+    m_POwner->loc.p.moving += moving;
+
+    // If the move speed / distance moved > 0x1fff, moving delta should be 0 / reset.
+    if (m_POwner->loc.p.moving > 0x1fff)
     {
         m_POwner->loc.p.moving = 0;
     }
@@ -536,7 +566,7 @@ bool CPathFind::FindRandomPath(const position_t& start, float maxRadius, uint8 m
         m_turnPoints.push_back(point.position);
         startPosition = m_turnPoints[i];
     }
-    m_points       = m_POwner->loc.zone->PNavigation->findStraightPath(start, m_turnPoints[0]);
+    m_points       = m_POwner->loc.zone->PNavigation->findSmoothPath(start, m_turnPoints[0]);
     m_currentPoint = 0;
 
     return !m_points.empty();
@@ -611,16 +641,6 @@ float CPathFind::GetRealSpeed()
     }
 
     return realSpeed;
-}
-
-float CPathFind::GetStepDistance(float speed)
-{
-    auto prevTick = m_POwner->PAI->getPrevTick();
-    auto tick     = m_POwner->PAI->getTick();
-    // Get the delta time between ticks to calculate distance per tick
-    auto delta    = std::chrono::duration<float>(tick - prevTick).count();
-    auto distance = speed * (speed * delta);
-    return distance;
 }
 
 bool CPathFind::IsFollowingPath()

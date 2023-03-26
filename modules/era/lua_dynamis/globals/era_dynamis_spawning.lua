@@ -1605,13 +1605,13 @@ xi.dynamis.mobOnRoam = function(mob) -- Handle pathing.
                     local spawn = mob:getSpawnPos()
                     local current = mob:getPos()
                     if last.x == current.x and last.y == current.y and last.z == current.z then
-                        mob:pathTo(first.x, first.y, first.z)
+                        mob:pathTo(first.x, first.y, first.z, 8)
                         return
                     elseif prev.x == current.x and prev.y == current.y and prev.z == current.z then
-                        mob:pathTo(dest.x, dest.y, dest.z)
+                        mob:pathTo(dest.x, dest.y, dest.z, 8)
                         return
                     elseif spawn.x == current.x and spawn.y == current.y and spawn.z == current.z then
-                        mob:pathTo(first.x, first.y, first.z)
+                        mob:pathTo(first.x, first.y, first.z, 8)
                         return
                     end
                 end
