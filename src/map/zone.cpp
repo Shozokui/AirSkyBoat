@@ -538,7 +538,7 @@ void CZone::LoadZoneLos()
     if (lineOfSight)
     {
         // Clean up previous object if one exists.
-        delete lineOfSight;
+        destroy(lineOfSight);
     }
 
     lineOfSight = ZoneLos::Load((uint16)GetID(), fmt::sprintf("losmeshes/%s.obj", GetName()));

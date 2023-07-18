@@ -20,10 +20,10 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 */
 
 #include "mob_controller.h"
-
 #include "ai/ai_container.h"
 #include "ai/helpers/targetfind.h"
 #include "ai/states/ability_state.h"
+#include "ai/states/inactive_state.h"
 #include "ai/states/magic_state.h"
 #include "ai/states/weaponskill_state.h"
 #include "common/utils.h"
@@ -36,6 +36,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 #include "status_effect_container.h"
 #include "utils/battleutils.h"
 #include "utils/petutils.h"
+#include "utils/zoneutils.h"
 
 CMobController::CMobController(CMobEntity* PEntity)
 : CController(PEntity)

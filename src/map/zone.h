@@ -727,10 +727,10 @@ public:
     CBattlefieldHandler* m_BattlefieldHandler; // BCNM Instances in this zone
     CCampaignHandler*    m_CampaignHandler;    // WOTG campaign information for this zone
 
-    CNavMesh* m_navMesh;            // zones navmesh for finding paths
-    bool      m_updatedNavmesh;     // Flag to turn off special path code.
-    bool      m_zoneCarefulPathing; // Zonewide careful pathing, should only be used with updated meshes.
-    ZoneLos*  lineOfSight = nullptr;
+    CNavMesh*  m_navMesh;            // zones navmesh for finding paths
+    bool       m_updatedNavmesh;     // Flag to turn off special path code.
+    bool       m_zoneCarefulPathing; // Zonewide careful pathing, should only be used with updated meshes.
+    ZoneLos*   lineOfSight = nullptr;
     time_point m_LoadedAt; // time zone was loaded
 
     void SetZoneDirection(uint8 direction);
@@ -742,8 +742,8 @@ public:
     uint8  GetZoneAnimation();
     uint32 GetZoneAnimStartTime();
     uint16 GetZoneAnimLength();
-    void LoadNavMesh();
-    void LoadZoneLos();
+    void   LoadNavMesh();
+    void   LoadZoneLos();
 
 private:
     ZONEID         m_zoneID;

@@ -21,7 +21,6 @@
 
 #include "mobentity.h"
 
-#include <algorithm>
 #include "ability.h"
 #include "ai/ai_container.h"
 #include "ai/controllers/mob_controller.h"
@@ -55,6 +54,7 @@
 #include "utils/petutils.h"
 #include "utils/zoneutils.h"
 #include "weapon_skill.h"
+#include <algorithm>
 
 #include <cstring>
 #include <random>
