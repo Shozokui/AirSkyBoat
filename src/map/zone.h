@@ -34,6 +34,7 @@
 
 #include "battlefield_handler.h"
 #include "campaign_handler.h"
+#include "common/vana_time.h"
 #include "los/zone_los.h"
 #include "navmesh.h"
 #include "packets/weather.h"
@@ -345,6 +346,15 @@ enum ZONEID : uint16
     ZONE_DYNAMIS_JEUNO_D                = 297,
     ZONE_WALK_OF_ECHOES_P1              = 298,
     MAX_ZONEID                          = 299,
+};
+
+enum NATION_TYPE : uint8
+{
+    NATION_SANDORIA = 0x00,
+    NATION_BASTOK   = 0x01,
+    NATION_WINDURST = 0x02,
+    NATION_BEASTMEN = 0x03,
+    NATION_NEUTRAL  = 0xFF,
 };
 
 enum class REGION_TYPE : uint8

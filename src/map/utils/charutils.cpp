@@ -91,8 +91,8 @@ along with this program.  If not, see http://www.gnu.org/licenses/
 #include "../treasure_pool.h"
 #include "../unitychat.h"
 #include "../universal_container.h"
-#include "../vana_time.h"
 #include "../weapon_skill.h"
+#include "common/vana_time.h"
 
 #include "../entities/automatonentity.h"
 #include "../entities/charentity.h"
@@ -896,8 +896,9 @@ namespace charutils
 
         charutils::LoadEquip(PChar);
         charutils::EmptyRecycleBin(PChar);
-        PChar->health.hp = zoneutils::IsResidentialArea(PChar) ? PChar->GetMaxHP() : HP;
-        PChar->health.mp = zoneutils::IsResidentialArea(PChar) ? PChar->GetMaxMP() : MP;
+        bool canRestore  = zoneutils::IsResidentialArea(PChar) && HP > 0;
+        PChar->health.hp = canRestore ? PChar->GetMaxHP() : HP;
+        PChar->health.mp = canRestore ? PChar->GetMaxMP() : MP;
         PChar->UpdateHealth();
 
         luautils::OnZoneIn(PChar);
@@ -2077,13 +2078,16 @@ namespace charutils
                 {
                     if (PItem->isType(ITEM_WEAPON))
                     {
-                        CItemWeapon* weapon           = (CItemWeapon*)PChar->getEquip(SLOT_AMMO);
-                        bool         longBowException = false;
+                        CItemWeapon* weapon              = (CItemWeapon*)PChar->getEquip(SLOT_AMMO);
+                        bool         longBowException    = false;
+                        bool         fishingRodException = false;
 
                         if (weapon != nullptr)
                         {
                             longBowException = ((CItemWeapon*)PItem)->getSkillType() == SKILL_ARCHERY &&
                                                ((CItemWeapon*)PItem)->getSubSkillType() == SUBSKILL_LONGB;
+                            fishingRodException = (PItem->getID() == GOLDFISH_BASKET && weapon->getID() != FISHINGBAIT_SUPER_SCOOP) ||
+                                                  (PItem->getID() != GOLDFISH_BASKET && weapon->getID() == FISHINGBAIT_SUPER_SCOOP);
                         }
 
                         if ((weapon != nullptr) && weapon->isType(ITEM_WEAPON))
@@ -2092,6 +2096,15 @@ namespace charutils
                                 ((CItemWeapon*)PItem)->getSubSkillType() != weapon->getSubSkillType())
                             {
                                 if (!longBowException || ((CItemWeapon*)PItem)->getSkillType() != weapon->getSkillType())
+                                {
+                                    UnequipItem(PChar, SLOT_AMMO, false);
+                                }
+                            }
+                            // Goldfishing gear exception
+                            else if (((CItemWeapon*)PItem)->getSkillType() == weapon->getSkillType() ||
+                                     ((CItemWeapon*)PItem)->getSubSkillType() == weapon->getSubSkillType())
+                            {
+                                if (fishingRodException)
                                 {
                                     UnequipItem(PChar, SLOT_AMMO, false);
                                 }
@@ -2107,13 +2120,17 @@ namespace charutils
                 {
                     if (PItem->isType(ITEM_WEAPON))
                     {
-                        CItemWeapon* weapon           = (CItemWeapon*)PChar->getEquip(SLOT_RANGED);
-                        bool         longBowException = false;
+                        CItemWeapon* weapon              = (CItemWeapon*)PChar->getEquip(SLOT_RANGED);
+                        bool         longBowException    = false;
+                        bool         fishingRodException = false;
+
                         if (weapon != nullptr)
                         {
                             longBowException = ((CItemWeapon*)PItem)->getSkillType() == SKILL_ARCHERY &&
                                                ((CItemWeapon*)PItem)->getSubSkillType() == SUBSKILL_XBO &&
                                                weapon->getSubSkillType() == SUBSKILL_LONGB;
+                            fishingRodException = (PItem->getID() == FISHINGBAIT_SUPER_SCOOP && weapon->getID() != GOLDFISH_BASKET) ||
+                                                  (PItem->getID() != FISHINGBAIT_SUPER_SCOOP && weapon->getID() == GOLDFISH_BASKET);
                         }
 
                         if ((weapon != nullptr) && weapon->isType(ITEM_WEAPON))
@@ -2122,6 +2139,15 @@ namespace charutils
                                 ((CItemWeapon*)PItem)->getSubSkillType() != weapon->getSubSkillType())
                             {
                                 if (!longBowException)
+                                {
+                                    UnequipItem(PChar, SLOT_RANGED, false);
+                                }
+                            }
+                            // Goldfishing gear exception
+                            else if (((CItemWeapon*)PItem)->getSkillType() == weapon->getSkillType() ||
+                                     ((CItemWeapon*)PItem)->getSubSkillType() == weapon->getSubSkillType())
+                            {
+                                if (fishingRodException)
                                 {
                                     UnequipItem(PChar, SLOT_RANGED, false);
                                 }
